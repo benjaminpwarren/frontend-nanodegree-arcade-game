@@ -29,7 +29,7 @@ var Player = function() {
     this.sprite = 'images/char-boy.png';
 };
 
-Player.prototype.update = function(){
+Player.prototype.update = function(dt) {
 
 };
 
