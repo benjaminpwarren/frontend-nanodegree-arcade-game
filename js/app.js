@@ -7,6 +7,12 @@ var Enemy = function() {
     // The image/sprite for our enemies, this uses
     // a helper we've provided to easily load images
     this.sprite = 'images/enemy-bug.png';
+
+    var baseSpeed = 200;
+    var speedFactor = getRandomInt(1,3) / 2 - 1;
+    this.speed = baseSpeed + baseSpeed * speedFactor;
+
+    this.enemyNum = allEnemies.length;
 };
 
 // Update the enemy's position, required method for game
@@ -15,8 +21,13 @@ Enemy.prototype.update = function(dt) {
     // You should multiply any movement by the dt parameter
     // which will ensure the game runs at the same speed for
     // all computers.
-    this.x = 100;
-    this.y = 100;
+    if (this.x) {
+        this.x = this.x + (this.speed * dt);
+    } else {
+        this.x = -200 + (getRandomInt(1,3) - 1) * 100;
+    }
+
+    this.y = this.enemyNum * 83 + 56;
 };
 
 // Draw the enemy on the screen, required method for game
@@ -42,7 +53,6 @@ Player.prototype.render = function(){
 
 Player.prototype.handleInput = function(){
     //handles player input to move character etc.
-
 };
 
 // Now instantiate your objects.
@@ -50,7 +60,6 @@ Player.prototype.handleInput = function(){
 // Place the player object in a variable called player
 
 var allEnemies = [];
-allEnemies.push(new Enemy());
 allEnemies.push(new Enemy());
 allEnemies.push(new Enemy());
 allEnemies.push(new Enemy());
@@ -69,3 +78,24 @@ document.addEventListener('keyup', function(e) {
 
     player.handleInput(allowedKeys[e.keyCode]);
 });
+
+
+function isEven(n) {
+   return isNumber(n) && (n % 2 === 0);
+}
+
+function isOdd(n) {
+   return isNumber(n) && (Math.abs(n) % 2 === 1);
+}
+
+function isNumber(n) {
+   return n === parseFloat(n);
+}
+
+/**
+ * Returns a random integer between min (inclusive) and max (inclusive)
+ * Using Math.round() will give you a non-uniform distribution!
+ */
+function getRandomInt(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
