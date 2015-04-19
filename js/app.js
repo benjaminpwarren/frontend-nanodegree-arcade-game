@@ -48,16 +48,43 @@ var Player = function() {
 };
 
 Player.prototype.update = function(dt) {
-    //this.x = 50;
-    //this.y = 50;
+
+    if (this.dx) {
+        this.x += this.dx;
+        this.dx = 0;
+    } else if (this.dy) {
+        this.y += this.dy;
+        this.dy = 0;
+    }
+
+    //TODO: check collisions
+
 };
 
 Player.prototype.render = function(){
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 };
 
-Player.prototype.handleInput = function(){
+Player.prototype.handleInput = function(key){
     //handles player input to move character etc.
+
+    var distance = this.spriteWidth / 2;
+
+    switch (key){
+        case 'left':
+            this.dx = - distance;
+        break;
+        case 'up':
+            this.dy = - distance;
+        break;
+        case 'right':
+            this.dx = distance;
+        break;
+        case 'down':
+            this.dy = distance;
+        break;
+
+    }
 };
 
 // Now instantiate your objects.
