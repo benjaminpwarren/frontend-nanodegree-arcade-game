@@ -41,10 +41,15 @@ Enemy.prototype.render = function() {
 // a handleInput() method.
 var Player = function() {
     this.sprite = 'images/char-boy.png';
-    this.spriteWidth    = 101;  //TODO: make dynamic.
-    this.spriteHeight   = 171; //TODO: make dynamic.
-    this.x = ctx.canvas.width / 2 - this.spriteWidth / 2;
-    this.y = ctx.canvas.height - this.spriteHeight - this.spriteHeight / 3;
+
+    //TODO: make dynamic.
+    this.spriteWidth    = 101;
+    this.spriteHeight   = 171;
+
+    //TODO: make dynamic.
+    var startTile = {col: 3, row: 6};
+    this.x = (startTile.col - 0.5) * 101 - this.spriteWidth / 2;
+    this.y = (startTile.row - 1)   *  83 -  83 / 2;
 };
 
 Player.prototype.update = function(dt) {
@@ -68,24 +73,29 @@ Player.prototype.render = function(){
 Player.prototype.handleInput = function(key){
     //handles player input to move character etc.
 
-    var distance = this.spriteWidth / 2;
+    var xDistance = this.spriteWidth;
+    var yDistance = 83;
 
     switch (key){
         case 'left':
-            this.dx = - distance;
+            this.dx = - xDistance;
         break;
         case 'up':
-            this.dy = - distance;
+            this.dy = - yDistance;
         break;
         case 'right':
-            this.dx = distance;
+            this.dx = xDistance;
         break;
         case 'down':
-            this.dy = distance;
+            this.dy = yDistance;
         break;
 
     }
 };
+
+var Border = function(){
+
+}
 
 // Now instantiate your objects.
 // Place all enemy objects in an array called allEnemies
