@@ -7,6 +7,8 @@ var Enemy = function() {
     // The image/sprite for our enemies, this uses
     // a helper we've provided to easily load images
     this.sprite = 'images/enemy-bug.png';
+    this.spriteWidth    = 101;  //TODO: make dynamic.
+    this.spriteHeight   = 171; //TODO: make dynamic.
 
     var baseSpeed = 200;
     var speedFactor = getRandomInt(1,3) / 2 - 1;
@@ -24,10 +26,9 @@ Enemy.prototype.update = function(dt) {
     if (this.x) {
         this.x = this.x + (this.speed * dt);
     } else {
-        this.x = -200 + (getRandomInt(1,3) - 1) * 100;
+        this.x = -200 + (getRandomInt(1, 3) - 1) * 100;
+        this.y = this.enemyNum * this.spriteHeight / 2 + this.spriteHeight / 3;
     }
-
-    this.y = this.enemyNum * 83 + 56;
 };
 
 // Draw the enemy on the screen, required method for game
@@ -40,11 +41,15 @@ Enemy.prototype.render = function() {
 // a handleInput() method.
 var Player = function() {
     this.sprite = 'images/char-boy.png';
+    this.spriteWidth    = 101;  //TODO: make dynamic.
+    this.spriteHeight   = 171; //TODO: make dynamic.
+    this.x = ctx.canvas.width / 2 - this.spriteWidth / 2;
+    this.y = ctx.canvas.height - this.spriteHeight - this.spriteHeight / 3;
 };
 
 Player.prototype.update = function(dt) {
-    this.x = 50;
-    this.y = 50;
+    //this.x = 50;
+    //this.y = 50;
 };
 
 Player.prototype.render = function(){
