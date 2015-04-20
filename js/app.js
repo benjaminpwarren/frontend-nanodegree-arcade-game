@@ -16,6 +16,16 @@ var Enemy = function() {
     this.speed = baseSpeed + baseSpeed * speedFactor;
 
     this.enemyNum = allEnemies.length + 1;
+
+    var startTile = {col: -3 + getRandomInt(1, 3), row: this.enemyNum + 1};
+    var tileWidth = 101;
+    var tileHeight = 83;
+    var tileTopOffset = 50;
+    var spriteOffset = this.spriteFeetCenterY - (tileHeight / 2 + tileTopOffset);
+    this.x = (startTile.col - 1) * tileWidth;
+    this.y = (startTile.row - 1) * tileHeight - spriteOffset;
+
+    //console.log('Enemy', this.enemyNum, this.y);
 };
 
 // Update the enemy's position, required method for game
@@ -24,20 +34,8 @@ Enemy.prototype.update = function(dt) {
     // You should multiply any movement by the dt parameter
     // which will ensure the game runs at the same speed for
     // all computers.
-    if (this.x) {
-        this.x = this.x + (this.speed * dt);
-    } else {
 
-        var startTile = {col: -3 + getRandomInt(1, 3), row: this.enemyNum + 1};
-        var tileWidth = 101;
-        var tileHeight = 83;
-        var tileTopOffset = 50;
-        var spriteOffset = this.spriteFeetCenterY - (tileHeight / 2 + tileTopOffset);
-        this.x = (startTile.col - 1) * tileWidth;
-        this.y = (startTile.row - 1) * tileHeight - spriteOffset;
-
-        //console.log('Enemy', this.enemyNum, this.y);
-    }
+    this.x = this.x + (this.speed * dt);
 };
 
 // Draw the enemy on the screen, required method for game
