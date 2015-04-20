@@ -7,14 +7,15 @@ var Enemy = function() {
     // The image/sprite for our enemies, this uses
     // a helper we've provided to easily load images
     this.sprite = 'images/enemy-bug.png';
-    this.spriteWidth    = 101;  //TODO: make dynamic.
-    this.spriteHeight   = 171; //TODO: make dynamic.
+    this.spriteWidth        = 101; //TODO: make dynamic.
+    this.spriteHeight       = 171; //TODO: make dynamic.
+    this.spriteFeetCenterY  = 127; //manually identified by looking at shadow under character in sprite
 
     var baseSpeed = 200;
     var speedFactor = getRandomInt(1,3) / 2 - 1;
     this.speed = baseSpeed + baseSpeed * speedFactor;
 
-    this.enemyNum = allEnemies.length;
+    this.enemyNum = allEnemies.length + 1;
 };
 
 // Update the enemy's position, required method for game
@@ -26,14 +27,27 @@ Enemy.prototype.update = function(dt) {
     if (this.x) {
         this.x = this.x + (this.speed * dt);
     } else {
-        this.x = -200 + (getRandomInt(1, 3) - 1) * 100;
-        this.y = this.enemyNum * this.spriteHeight / 2 + this.spriteHeight / 3;
+
+        var startTile = {col: -3 + getRandomInt(1, 3), row: this.enemyNum + 1};
+        var tileWidth = 101;
+        var tileHeight = 83;
+        var tileTopOffset = 50;
+        var spriteOffset = this.spriteFeetCenterY - (tileHeight / 2 + tileTopOffset);
+        this.x = (startTile.col - 1) * tileWidth;
+        this.y = (startTile.row - 1) * tileHeight - spriteOffset;
+
+        //console.log('Enemy', this.enemyNum, this.y);
     }
 };
 
 // Draw the enemy on the screen, required method for game
 Enemy.prototype.render = function() {
-    ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
+    var img = Resources.get(this.sprite);
+    ctx.drawImage(img, this.x, this.y);
+    //border for testing
+    ctx.strokeStyle = '#f00';  // some color/style
+    ctx.lineWidth = 2;
+    ctx.strokeRect(this.x, this.y, img.width, img.height);
 };
 
 // Now write your own player class
@@ -41,15 +55,21 @@ Enemy.prototype.render = function() {
 // a handleInput() method.
 var Player = function() {
     this.sprite = 'images/char-boy.png';
-
     //TODO: make dynamic.
-    this.spriteWidth    = 101;
-    this.spriteHeight   = 171;
+    this.spriteWidth        = 101;
+    this.spriteHeight       = 171;
+    this.spriteFeetCenterY  = 133;
 
     //TODO: make dynamic.
     var startTile = {col: 3, row: 6};
-    this.x = (startTile.col - 0.5) * 101 - this.spriteWidth / 2;
-    this.y = (startTile.row - 1)   *  83 -  83 / 2;
+    var tileWidth = 101;
+    var tileHeight = 83;
+    var tileTopOffset = 50;
+    var spriteOffset = this.spriteFeetCenterY - (tileHeight / 2 + tileTopOffset);
+    this.x = (startTile.col - 1) * tileWidth;
+    this.y = (startTile.row - 1) * tileHeight - spriteOffset;
+
+    //console.log('Player', this.y);
 };
 
 Player.prototype.update = function(dt) {
@@ -67,7 +87,12 @@ Player.prototype.update = function(dt) {
 };
 
 Player.prototype.render = function(){
-    ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
+    var img = Resources.get(this.sprite);
+    ctx.drawImage(img, this.x, this.y);
+    //border for testing
+    ctx.strokeStyle = '#00f';  // some color/style
+    ctx.lineWidth = 2;
+    ctx.strokeRect(this.x, this.y, img.width, img.height);
 };
 
 Player.prototype.handleInput = function(key){
