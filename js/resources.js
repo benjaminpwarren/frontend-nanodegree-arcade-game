@@ -22,8 +22,14 @@
              * loop through each value and call our image
              * loader on that image file
              */
-            urlOrArr.forEach(function(url) {
-                _load(url);
+            urlOrArr.forEach(function(value) {
+                //If the dev passed an array of objects
+                if (value.hasOwnProperty("url")){
+                    _load(value.url);
+                } else {
+                    //The developer passed a simple array (ORIGINAL BEHAVIOUR)
+                    _load(value);
+                }
             });
         } else {
             /* The developer did not pass an array to this function,
