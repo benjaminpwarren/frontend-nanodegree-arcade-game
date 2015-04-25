@@ -16,27 +16,32 @@
      * an array of strings pointing to image files or a string for a single
      * image. It will then call our private image loading function accordingly.
      */
-    function load(urlOrArr) {
-        if(urlOrArr instanceof Array) {
+    function load(arg) {
+        /* If the developer passed in an object of images
+         * loop through each value and call our image
+         * loader on that image file
+         */
+        if (arg instanceof Object) {
+            Object.keys(arg).forEach(function(url) {
+                _load(url);
+            });
+
+        } else if (arg instanceof Array) {
             /* If the developer passed in an array of images
              * loop through each value and call our image
              * loader on that image file
              */
-            urlOrArr.forEach(function(value) {
-                //If the dev passed an array of objects
-                if (value.hasOwnProperty("url")){
-                    _load(value.url);
-                } else {
-                    //The developer passed a simple array (ORIGINAL BEHAVIOUR)
-                    _load(value);
-                }
+            arg.forEach(function(url) {
+
+                _load(url);
+
             });
         } else {
             /* The developer did not pass an array to this function,
              * assume the value is a string and call our image loader
              * directly.
              */
-            _load(urlOrArr);
+            _load(arg);
         }
     }
 
@@ -44,7 +49,7 @@
      * called by the public image loader function.
      */
     function _load(url) {
-        if(resourceCache[url]) {
+        if (resourceCache[url]) {
             /* If this URL has been previously loaded it will exist within
              * our resourceCache array. Just return that image rather
              * re-loading the image.
@@ -65,8 +70,10 @@
                 /* Once the image is actually loaded and properly cached,
                  * call all of the onReady() callbacks we have defined.
                  */
-                if(isReady()) {
-                    readyCallbacks.forEach(function(func) { func(); });
+                if (isReady()) {
+                    readyCallbacks.forEach(function(func) {
+                        func();
+                    });
                 }
             };
 
@@ -79,7 +86,7 @@
         }
     }
 
-    /* This is used by developer's to grab references to images they know
+    /* This is used by developers to grab references to images they know
      * have been previously loaded. If an image is cached, this functions
      * the same as calling load() on that URL.
      */
@@ -92,9 +99,9 @@
      */
     function isReady() {
         var ready = true;
-        for(var k in resourceCache) {
-            if(resourceCache.hasOwnProperty(k) &&
-               !resourceCache[k]) {
+        for (var k in resourceCache) {
+            if (resourceCache.hasOwnProperty(k) &&
+                !resourceCache[k]) {
                 ready = false;
             }
         }

@@ -170,21 +170,21 @@ var Engine = (function(global) {
      * all of these images are properly loaded our game will start.
      */
 
-    var resources = [];
+    var resources = {};
 
-    resources.push({url: 'images/stone-block.png'});
-    resources.push({url: 'images/water-block.png'});
-    resources.push({url: 'images/grass-block.png'});
+    resources['images/stone-block.png'] = {};
+    resources['images/water-block.png'] = {};
+    resources['images/grass-block.png'] = {};
 
-    resources.push({
-        url: 'images/enemy-bug.png',
-        boundingBox: {topLeft: [1, 77], bottomRight: [98, 142]}
-    });
+    resources['images/enemy-bug.png'] = {
+        boundingBox: {topLeft: [1, 77], bottomRight: [98, 142]},
+        feetCenterY: 127
+    };
 
-    resources.push({
-        url: 'images/char-boy.png',
-        boundingBox: {topLeft: [17, 63], bottomRight: [83, 138]}
-    });
+    resources['images/char-boy.png'] = {
+        boundingBox: {topLeft: [17, 63], bottomRight: [83, 138]},
+        feetCenterY: 133
+    };
 
     Resources.load(resources);
     Resources.onReady(init);
@@ -194,4 +194,5 @@ var Engine = (function(global) {
      * from within their app.js files.
      */
     global.ctx = ctx;
+    global.resources = resources;
 })(window);
