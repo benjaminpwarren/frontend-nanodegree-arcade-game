@@ -187,16 +187,28 @@ var Engine = (function(global) {
 
     resources['images/enemy-bug.png'] = {
         boundingBox: {
-            topLeft: [1, 77],
-            bottomRight: [98, 142]
+            topLeft: {
+                x: 1,
+                y: 77
+            },
+            bottomRight: {
+                x: 98,
+                y: 142
+            }
         },
         feetCenterY: 127
     };
 
     resources['images/char-boy.png'] = {
         boundingBox: {
-            topLeft: [17, 63],
-            bottomRight: [83, 138]
+            topLeft: {
+                x: 17,
+                y: 63
+            },
+            bottomRight: {
+                x: 83,
+                y: 138
+            }
         },
         feetCenterY: 133
     };
