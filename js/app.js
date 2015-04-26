@@ -7,25 +7,23 @@ var Enemy = function() {
     // The image/sprite for our enemies, this uses
     // a helper we've provided to easily load images
     this.sprite = 'images/enemy-bug.png';
-    this.spriteWidth        = 101; //TODO: make dynamic.
-    this.spriteHeight       = 171; //TODO: make dynamic.
-    this.spriteFeetCenterY  = 127; //manually identified by looking at shadow under character in sprite
+    this.img = Resources.get(this.sprite);
+    this.resource = resources[this.sprite];
 
     var baseSpeed = 200;
-    var speedFactor = getRandomInt(1,3) / 2 - 1;
+    var speedFactor = getRandomInt(1, 3) / 2 - 1;
     this.speed = baseSpeed + baseSpeed * speedFactor;
 
     this.enemyNum = allEnemies.length + 1;
 
-    var startTile = {col: -3 + getRandomInt(1, 3), row: this.enemyNum + 1};
-    var tileWidth = 101;
-    var tileHeight = 83;
-    var tileTopOffset = 50;
-    var spriteOffset = this.spriteFeetCenterY - (tileHeight / 2 + tileTopOffset);
-    this.x = (startTile.col - 1) * tileWidth;
-    this.y = (startTile.row - 1) * tileHeight - spriteOffset;
+    var startTile = {
+        col: -3 + getRandomInt(1, 3),
+        row: this.enemyNum + 1
+    };
 
-    //console.log('Enemy', this.enemyNum, this.y);
+    var spriteOffset = this.resource.feetCenterY - (tile.height / 2 + tile.topOffset);
+    this.x = (startTile.col - 1) * tile.width;
+    this.y = (startTile.row - 1) * tile.height - spriteOffset;
 };
 
 // Update the enemy's position, required method for game
@@ -40,12 +38,12 @@ Enemy.prototype.update = function(dt) {
 
 // Draw the enemy on the screen, required method for game
 Enemy.prototype.render = function() {
-    var img = Resources.get(this.sprite);
-    ctx.drawImage(img, this.x, this.y);
+    //var img = Resources.get(this.sprite);
+    ctx.drawImage(this.img, this.x, this.y);
     //border for testing
-    ctx.strokeStyle = '#f00';  // some color/style
+    ctx.strokeStyle = '#f00'; // some color/style
     ctx.lineWidth = 2;
-    ctx.strokeRect(this.x, this.y, img.width, img.height);
+    ctx.strokeRect(this.x, this.y, this.img.width, this.img.height);
 };
 
 // Now write your own player class
@@ -54,12 +52,15 @@ Enemy.prototype.render = function() {
 var Player = function() {
     this.sprite = 'images/char-boy.png';
     //TODO: make dynamic.
-    this.spriteWidth        = 101;
-    this.spriteHeight       = 171;
-    this.spriteFeetCenterY  = 133;
+    this.spriteWidth = 101;
+    this.spriteHeight = 171;
+    this.spriteFeetCenterY = 133;
 
     //TODO: make dynamic.
-    var startTile = {col: 3, row: 6};
+    var startTile = {
+        col: 3,
+        row: 6
+    };
     var tileWidth = 101;
     var tileHeight = 83;
     var tileTopOffset = 50;
@@ -84,77 +85,98 @@ Player.prototype.update = function(dt) {
 
 };
 
-Player.prototype.render = function(){
+Player.prototype.render = function() {
     var img = Resources.get(this.sprite);
     ctx.drawImage(img, this.x, this.y);
     //border for testing
-    ctx.strokeStyle = '#00f';  // some color/style
+    ctx.strokeStyle = '#00f'; // some color/style
     ctx.lineWidth = 2;
     ctx.strokeRect(this.x, this.y, img.width, img.height);
 };
 
-Player.prototype.handleInput = function(key){
+Player.prototype.handleInput = function(key) {
     //handles player input to move character etc.
 
     var xDistance = this.spriteWidth;
     var yDistance = 83;
 
-    switch (key){
+    switch (key) {
         case 'left':
-            this.dx = - xDistance;
-        break;
+            this.dx = -xDistance;
+            break;
         case 'up':
-            this.dy = - yDistance;
-        break;
+            this.dy = -yDistance;
+            break;
         case 'right':
             this.dx = xDistance;
-        break;
+            break;
         case 'down':
             this.dy = yDistance;
-        break;
+            break;
 
     }
 };
 
-var Border = function(){
+Player.prototype.collided = function() {
 
-}
+    //check if collided with enemy
+
+    var collided = false;
+
+    allEnemies.some(function(enemy) {
+        if (enemy /*playerBox intersects enemy box*/ ) {
+            collided = true;
+            return true;
+        }
+    });
+
+};
 
 // Now instantiate your objects.
 // Place all enemy objects in an array called allEnemies
 // Place the player object in a variable called player
 
+// Shells and stubs so Engine Update and Render calls don't fail.
+/* Doing it this way as we need to wait for the resources to load before instantiating
+   our objects as our objects use properties such as the width and height of the sprites
+*/
 var allEnemies = [];
-allEnemies.push(new Enemy());
-allEnemies.push(new Enemy());
-allEnemies.push(new Enemy());
+var player = [];
+player.update = function() {};
+player.render = function() {};
 
-var player = new Player();
+Resources.onReady(function() {
 
-// This listens for key presses and sends the keys to your
-// Player.handleInput() method. You don't need to modify this.
-document.addEventListener('keyup', function(e) {
-    var allowedKeys = {
-        37: 'left',
-        38: 'up',
-        39: 'right',
-        40: 'down'
-    };
+    allEnemies.push(new Enemy());
+    allEnemies.push(new Enemy());
+    allEnemies.push(new Enemy());
 
-    player.handleInput(allowedKeys[e.keyCode]);
+    player = new Player();
+
+    // This listens for key presses and sends the keys to your
+    // Player.handleInput() method. You don't need to modify this.
+    document.addEventListener('keyup', function(e) {
+        var allowedKeys = {
+            37: 'left',
+            38: 'up',
+            39: 'right',
+            40: 'down'
+        };
+
+        player.handleInput(allowedKeys[e.keyCode]);
+    });
 });
 
-
 function isEven(n) {
-   return isNumber(n) && (n % 2 === 0);
+    return isNumber(n) && (n % 2 === 0);
 }
 
 function isOdd(n) {
-   return isNumber(n) && (Math.abs(n) % 2 === 1);
+    return isNumber(n) && (Math.abs(n) % 2 === 1);
 }
 
 function isNumber(n) {
-   return n === parseFloat(n);
+    return n === parseFloat(n);
 }
 
 /**

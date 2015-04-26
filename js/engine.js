@@ -16,6 +16,8 @@
 
 'use strict';
 
+//TODO: refactor so not polluting global namespace
+
 var Engine = (function(global) {
     /* Predefine the variables we'll be using within this scope,
      * create the canvas element, grab the 2D context for that canvas
@@ -26,6 +28,13 @@ var Engine = (function(global) {
         canvas = doc.createElement('canvas'),
         ctx = canvas.getContext('2d'),
         lastTime;
+
+    // Set our tile properties for use below. Also exported.
+    var tile = {
+        width: 101,
+        height: 83, //83 is effective height as a result of overlap placement
+        topOffset: 50
+    };
 
     canvas.width = 505;
     canvas.height = 606;
@@ -110,12 +119,12 @@ var Engine = (function(global) {
          * for that particular row of the game level.
          */
         var rowImages = [
-                'images/water-block.png',   // Top row is water
-                'images/stone-block.png',   // Row 1 of 3 of stone
-                'images/stone-block.png',   // Row 2 of 3 of stone
-                'images/stone-block.png',   // Row 3 of 3 of stone
-                'images/grass-block.png',   // Row 1 of 2 of grass
-                'images/grass-block.png'    // Row 2 of 2 of grass
+                'images/water-block.png', // Top row is water
+                'images/stone-block.png', // Row 1 of 3 of stone
+                'images/stone-block.png', // Row 2 of 3 of stone
+                'images/stone-block.png', // Row 3 of 3 of stone
+                'images/grass-block.png', // Row 1 of 2 of grass
+                'images/grass-block.png' // Row 2 of 2 of grass
             ],
             numRows = 6,
             numCols = 5,
@@ -134,7 +143,7 @@ var Engine = (function(global) {
                  * so that we get the benefits of caching these images, since
                  * we're using them over and over.
                  */
-                ctx.drawImage(Resources.get(rowImages[row]), col * 101, row * 83);
+                ctx.drawImage(Resources.get(rowImages[row]), col * tile.width, row * tile.height);
             }
         }
 
@@ -177,12 +186,18 @@ var Engine = (function(global) {
     resources['images/grass-block.png'] = {};
 
     resources['images/enemy-bug.png'] = {
-        boundingBox: {topLeft: [1, 77], bottomRight: [98, 142]},
+        boundingBox: {
+            topLeft: [1, 77],
+            bottomRight: [98, 142]
+        },
         feetCenterY: 127
     };
 
     resources['images/char-boy.png'] = {
-        boundingBox: {topLeft: [17, 63], bottomRight: [83, 138]},
+        boundingBox: {
+            topLeft: [17, 63],
+            bottomRight: [83, 138]
+        },
         feetCenterY: 133
     };
 
@@ -195,4 +210,5 @@ var Engine = (function(global) {
      */
     global.ctx = ctx;
     global.resources = resources;
+    global.tile = tile;
 })(window);
