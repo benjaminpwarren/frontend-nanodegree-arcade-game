@@ -39,17 +39,26 @@ Enemy.prototype.update = function(dt) {
 
 // Draw the enemy on the screen, required method for game
 Enemy.prototype.render = function() {
-    //var img = Resources.get(this.sprite);
+
     ctx.drawImage(this.img, this.x, this.y);
+
     //border for testing
-    ctx.strokeStyle = '#f00'; // some color/style
+    ctx.strokeStyle = '#f00';
     ctx.lineWidth = 2;
     ctx.strokeRect(this.x, this.y, this.img.width, this.img.height);
+
+    //draw bounding box border
+    var boundingBox = this.resource.boundingBox;
+    ctx.strokeStyle = '#0f0';
+    ctx.strokeRect(this.x + boundingBox.topLeft.x, this.y + boundingBox.topLeft.y, boundingBox.bottomRight.x - boundingBox.topLeft.x, boundingBox.bottomRight.y - boundingBox.topLeft.y);
 };
 
 // Now write your own player class
 // This class requires an update(), render() and
 // a handleInput() method.
+
+/* TODO: refactor Player and Enemy to use same parent class? Their constructors are
+   virtually identical. As are their render functions.*/
 var Player = function() {
     this.sprite = 'images/char-boy.png';
     this.img = Resources.get(this.sprite);
@@ -76,17 +85,21 @@ Player.prototype.update = function(dt) {
         this.dy = 0;
     }
 
-    //TODO: check collisions
-
 };
 
 Player.prototype.render = function() {
-    var img = Resources.get(this.sprite);
-    ctx.drawImage(img, this.x, this.y);
+
+    ctx.drawImage(this.img, this.x, this.y);
+
     //border for testing
-    ctx.strokeStyle = '#00f'; // some color/style
+    ctx.strokeStyle = '#00f';
     ctx.lineWidth = 2;
-    ctx.strokeRect(this.x, this.y, img.width, img.height);
+    ctx.strokeRect(this.x, this.y, this.img.width, this.img.height);
+
+    //draw bounding box border
+    var boundingBox = this.resource.boundingBox;
+    ctx.strokeStyle = '#0f0';
+    ctx.strokeRect(this.x + boundingBox.topLeft.x, this.y + boundingBox.topLeft.y, boundingBox.bottomRight.x - boundingBox.topLeft.x, boundingBox.bottomRight.y - boundingBox.topLeft.y);
 };
 
 Player.prototype.handleInput = function(key) {
