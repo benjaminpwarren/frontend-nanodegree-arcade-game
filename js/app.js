@@ -100,6 +100,7 @@ Player.prototype.render = function() {
     var boundingBox = this.resource.boundingBox;
     ctx.strokeStyle = '#0f0';
     ctx.strokeRect(this.x + boundingBox.topLeft.x, this.y + boundingBox.topLeft.y, boundingBox.bottomRight.x - boundingBox.topLeft.x, boundingBox.bottomRight.y - boundingBox.topLeft.y);
+
 };
 
 Player.prototype.handleInput = function(key) {
@@ -125,19 +126,75 @@ Player.prototype.handleInput = function(key) {
     }
 };
 
-Player.prototype.collided = function() {
+var hud = function() {
 
-    //check if collided with enemy
+    function drawText(options) {
 
-    var collided = false;
+        var defaults = {
+            text: '',
+            lineWidth: 1,
+            fillStyle: 'white',
+            strokeStyle: 'black',
+            font: '24pt \'Arial\'',
+            position: 'top center',
+            padding: '3'
+        };
 
-    allEnemies.some(function(enemy) {
-        if (enemy /*playerBox intersects enemy box*/ ) {
-            collided = true;
-            return true;
+        var opts = Object.assign({}, defaults, options);
+        opts.position = opts.position.toLowerCase();
+
+        ctx.font = opts.font;
+        ctx.lineWidth = opts.lineWidth;
+        ctx.fillStyle = opts.fillStyle;
+        ctx.strokeStyle = opts.strokeStyle;
+
+        var positionMatches = /(left|center|right)?\s?(top|center|bottom)?/.exec(opts.position);
+
+        //assume center if horizontal or vertical not provided.
+        positionMatches[1] = positionMatches[1] ? positionMatches[1] : 'center';
+        positionMatches[2] = positionMatches[2] ? positionMatches[2] : 'center';
+
+        var position = {
+            x: opts.padding,
+            y: opts.padding
+        };
+
+        ctx.textAlign = positionMatches[1];
+
+        switch (positionMatches[1]) {
+            case 'left':
+                break;
+            case 'center':
+                position.x = ctx.canvas.width / 2;
+                break;
+            case 'right':
+                position.x = ctx.canvas.width - opts.padding;
+                break;
         }
-    });
 
+        ctx.textBaseline = positionMatches[2];
+
+        switch (positionMatches[1]) {
+            case 'top':
+                break;
+            case 'center':
+                position.y = ctx.canvas.height / 2;
+                break;
+            case 'bottom':
+                position.y = ctx.canvas.height - opts.padding;
+
+                break;
+        }
+
+        ctx.fillText(opts.text, position.x, position.y);
+        ctx.strokeText(opts.text, position.x, position.y);
+
+    }
+
+    drawText({
+        text: 'Lives: *****',
+        position: 'right top'
+    });
 };
 
 // Now instantiate your objects.
@@ -193,4 +250,40 @@ function isNumber(n) {
  */
 function getRandomInt(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+
+//polyfills
+
+if (!Object.assign) {
+    Object.defineProperty(Object, 'assign', {
+        enumerable: false,
+        configurable: true,
+        writable: true,
+        value: function(target, firstSource) {
+            'use strict';
+            if (target === undefined || target === null) {
+                throw new TypeError('Cannot convert first argument to object');
+            }
+
+            var to = Object(target);
+            for (var i = 1; i < arguments.length; i++) {
+                var nextSource = arguments[i];
+                if (nextSource === undefined || nextSource === null) {
+                    continue;
+                }
+                nextSource = Object(nextSource);
+
+                var keysArray = Object.keys(Object(nextSource));
+                for (var nextIndex = 0, len = keysArray.length; nextIndex < len; nextIndex++) {
+                    var nextKey = keysArray[nextIndex];
+                    var desc = Object.getOwnPropertyDescriptor(nextSource, nextKey);
+                    if (desc !== undefined && desc.enumerable) {
+                        to[nextKey] = nextSource[nextKey];
+                    }
+                }
+            }
+            return to;
+        }
+    });
 }
