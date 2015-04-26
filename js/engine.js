@@ -91,7 +91,7 @@ var Engine = (function(global) {
      */
     function update(dt) {
         updateEntities(dt);
-        // checkCollisions();
+        checkCollisions();
     }
 
     /* This is called by the update function  and loops through all of the
@@ -106,6 +106,40 @@ var Engine = (function(global) {
             enemy.update(dt);
         });
         player.update();
+    }
+
+    function checkCollisions() {
+
+        //if player hasn't been fully constructed yet, exit
+        if (!player.resource) {
+            return;
+        }
+
+        var playerBox = getBoundingBox(player);
+
+        allEnemies.forEach(function(enemy) {
+            var enemyBox = getBoundingBox(enemy);
+
+            if (overlap(playerBox, enemyBox)) {
+                player = new Player();
+            }
+        });
+    }
+
+    function getBoundingBox(entity) {
+        return {
+            top: entity.y + entity.resource.boundingBox.topLeft.y,
+            right: entity.x + entity.resource.boundingBox.bottomRight.x,
+            bottom: entity.y + entity.resource.boundingBox.bottomRight.y,
+            left: entity.x + entity.resource.boundingBox.topLeft.x
+        };
+    }
+
+    function overlap(box1, box2) {
+        return !((box1.bottom < box2.top) ||
+            (box1.top > box2.bottom) ||
+            (box1.left > box2.right) ||
+            (box1.right < box2.left));
     }
 
     /* This function initially draws the "game level", it will then call
