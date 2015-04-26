@@ -11,19 +11,20 @@ var Enemy = function() {
     this.resource = resources[this.sprite];
 
     var baseSpeed = 200;
+    //give the enemy one of three speeds: 1/2 base speed, base speed, or 1 1/2 base speed.
     var speedFactor = getRandomInt(1, 3) / 2 - 1;
     this.speed = baseSpeed + baseSpeed * speedFactor;
 
     this.enemyNum = allEnemies.length + 1;
 
     var startTile = {
-        col: -3 + getRandomInt(1, 3),
+        col: -3 + getRandomInt(1, 3) / 2, //start the enemy on tile -2, -1, or 0
         row: this.enemyNum + 1
     };
 
-    var spriteOffset = this.resource.feetCenterY - (tile.height / 2 + tile.topOffset);
+    var spriteOffsetY = this.resource.feetCenterY - (tile.height / 2 + tile.topOffset);
     this.x = (startTile.col - 1) * tile.width;
-    this.y = (startTile.row - 1) * tile.height - spriteOffset;
+    this.y = (startTile.row - 1) * tile.height - spriteOffsetY;
 };
 
 // Update the enemy's position, required method for game
@@ -51,24 +52,18 @@ Enemy.prototype.render = function() {
 // a handleInput() method.
 var Player = function() {
     this.sprite = 'images/char-boy.png';
-    //TODO: make dynamic.
-    this.spriteWidth = 101;
-    this.spriteHeight = 171;
-    this.spriteFeetCenterY = 133;
+    this.img = Resources.get(this.sprite);
+    this.resource = resources[this.sprite];
 
-    //TODO: make dynamic.
     var startTile = {
         col: 3,
         row: 6
     };
-    var tileWidth = 101;
-    var tileHeight = 83;
-    var tileTopOffset = 50;
-    var spriteOffset = this.spriteFeetCenterY - (tileHeight / 2 + tileTopOffset);
-    this.x = (startTile.col - 1) * tileWidth;
-    this.y = (startTile.row - 1) * tileHeight - spriteOffset;
 
-    //console.log('Player', this.y);
+    var spriteOffsetY = this.resource.feetCenterY - (tile.height / 2 + tile.topOffset);
+    this.x = (startTile.col - 1) * tile.width;
+    this.y = (startTile.row - 1) * tile.height - spriteOffsetY;
+
 };
 
 Player.prototype.update = function(dt) {
@@ -97,8 +92,8 @@ Player.prototype.render = function() {
 Player.prototype.handleInput = function(key) {
     //handles player input to move character etc.
 
-    var xDistance = this.spriteWidth;
-    var yDistance = 83;
+    var xDistance = tile.width;
+    var yDistance = tile.height;
 
     switch (key) {
         case 'left':
