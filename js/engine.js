@@ -40,6 +40,13 @@ var Engine = (function(global) {
     canvas.height = 606;
     doc.getElementById('wall').appendChild(canvas);
 
+    var border = {
+        top: tile.topOffset,
+        left: 0,
+        width: canvas.width,
+        height: tile.height * 6
+    };
+
     var running = true;
 
     /* This function serves as the kickoff point for the game loop itself
@@ -170,6 +177,12 @@ var Engine = (function(global) {
                 }
             });
         });
+
+        if (player.x < border.left) {player.x = border.left; console.log('left')};
+        if (player.x > border.left + border.width - player.img.width) {player.x = border.left + border.width - player.img.width; console.log('right')};
+        if (player.y < border.top) {player.y = border.top; console.log('top')};
+        //TODO: remove magic number 4 and calculate correctly.
+        if (player.y > border.top + border.height - player.img.height) {player.y = border.top + border.height - player.img.height - 4; console.log('bottom')};
     }
 
     /*
@@ -276,6 +289,12 @@ var Engine = (function(global) {
         renderEntities();
 
         hud.render();
+
+        /*
+        //border for testing
+        ctx.strokeStyle = '#0f0';
+        ctx.lineWidth = 2;
+        ctx.strokeRect(border.left, border.top, border.width, border.height);*/
     }
 
     /* This function is called by the render function and is called on each game

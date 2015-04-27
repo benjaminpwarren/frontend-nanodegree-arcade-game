@@ -77,7 +77,7 @@ Player.prototype.spawn = function() {
 
     var spriteOffsetY = this.resource.feetCenterY - (tile.height / 2 + tile.topOffset);
     this.x = (startTile.col - 1) * tile.width;
-    this.y = (startTile.row - 1) * tile.height - spriteOffsetY;
+    this.y = (startTile.row - 1) * tile.height - Math.round(spriteOffsetY);
 }
 
 Player.prototype.update = function(dt) {
