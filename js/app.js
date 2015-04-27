@@ -15,11 +15,9 @@ var Enemy = function() {
     var speedFactor = getRandomInt(1, 3) / 2 - 1;
     this.speed = baseSpeed + baseSpeed * speedFactor;
 
-    this.enemyNum = allEnemies.length + 1;
-
     var startTile = {
         col: -3 + getRandomInt(1, 3) / 2, //start the enemy on tile -2, -1, or 0
-        row: this.enemyNum + 1
+        row: getRandomInt(2, 4)
     };
 
     var spriteOffsetY = this.resource.feetCenterY - (tile.height / 2 + tile.topOffset);
@@ -35,6 +33,11 @@ Enemy.prototype.update = function(dt) {
     // all computers.
 
     this.x = this.x + (this.speed * dt);
+
+    if (this.x > ctx.canvas.width) {
+       allEnemies.splice(allEnemies.indexOf(this), 1);
+       allEnemies.push(new Enemy());
+    }
 };
 
 // Draw the enemy on the screen, required method for game
