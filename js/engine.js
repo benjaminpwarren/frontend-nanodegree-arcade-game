@@ -121,20 +121,41 @@ var Engine = (function(global) {
         allEnemies.forEach(function(enemy) {
             var enemyBox = getBoundingBox(enemy);
 
+            //if there's an overlap, respawn the player
             if (overlap(playerBox, enemyBox)) {
-                //player = new Player();
-                enemy.speed = 0;
+                player = new Player();
+                //enemy.speed = 0;
             }
+
+            //loop through all enemies and reduce speed to same if enemy hits another enemy
+            allEnemies.forEach(function(enemy2) {
+
+                if (enemy2 === enemy) return;
+
+                var enemy2Box = getBoundingBox(enemy2);
+
+                if (overlap(enemy2Box, enemyBox)) {
+                    enemy2.speed = enemy.speed;
+                    enemy2.x = enemy.x - enemy.img.width;
+                }
+            });
         });
     }
 
-    /*function dev_drawBoundingBoxBorder(boundingBox){
+    /*
+    had moved this here to clean up app.js code but it doesn't work when put with the
+    collision stuff above, presumably because the tile repaint happens immediately
+    after the collision stuff (so the borders are drawn, they're just painted over
+    immediately).
+
+    function dev_drawBoundingBoxBorder(boundingBox){
         //draw bounding box border //TODO remove.
         ctx.strokeStyle = '#0f0';
         ctx.lineWidth = 2;
         ctx.strokeRect(boundingBox.left, boundingBox.top, boundingBox.width, boundingBox.height);
     }*/
 
+    /* Get the resource's bounding box and update to current position */
     function getBoundingBox(entity) {
 
         var box = Object.assign({}, entity.resource.boundingBox);
@@ -147,6 +168,10 @@ var Engine = (function(global) {
         return box;
     }
 
+    /* Get the resource's bounding box and adjust it based on a factor, and
+       update to current position. When using bounding boxes, a factor of 0.8
+       makes for more visually realistic collisions due to bounding boxes being
+       a very approximate representation of the entity's shape.*/
     function getAdjBoundingBox(entity) {
 
         var adjFactor = 0.8;
