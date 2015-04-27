@@ -58,22 +58,32 @@ Enemy.prototype.render = function() {
 
 /* TODO: refactor Player and Enemy to use same parent class? Their constructors are
    virtually identical. As are their render functions.*/
-var Player = function() {
-    this.sprite = 'images/char-boy.png';
+var Player = function(options) {
+
+    var defaults = {
+      sprite: 'images/char-boy.png',
+      lives: 5,
+      points: 0,
+      maxPoints: 10,
+      startTile: {col: 3, row:6}
+    }
+
+    this.options = Object.assign({}, defaults, options);
+
+    this.sprite = this.options.sprite;
     this.img = Resources.get(this.sprite);
     this.resource = resources[this.sprite];
 
-    this.lives = 5;
+    this.lives = this.options.lives;
+    this.points = this.options.points;
+    this.maxPoints = this.options.maxPoints;
 
     this.spawn();
 };
 
-Player.prototype.spawn = function() {
+Player.prototype.spawn = function(startTile) {
 
-    var startTile = {
-        col: 3,
-        row: 6
-    };
+    startTile = startTile || this.options.startTile;
 
     var spriteOffsetY = this.resource.feetCenterY - (tile.height / 2 + tile.topOffset);
     this.x = (startTile.col - 1) * tile.width;
@@ -205,7 +215,21 @@ var hud = (function() {
         var lifeImage = Resources.get('images/Heart-small.png');
 
         for (var i = 0; i < player.lives; i++) {
-            ctx.drawImage(lifeImage, ctx.canvas.width - (25 + 5) * (i + 1), 5);
+            ctx.drawImage(lifeImage, ctx.canvas.width - (lifeImage.width + 5) * (i + 1), 5);
+        }
+    };
+
+    var drawPoints = function() {
+        var pointSpaceImage = Resources.get('images/Gem Orange outline-small.png');
+
+        for (var i = 0; i < player.maxPoints; i++) {
+            ctx.drawImage(pointSpaceImage, (pointSpaceImage.width + 5) * (i), 2);
+        }
+
+        var pointImage = Resources.get('images/Gem Orange-small.png');
+
+        for (var i = 0; i < player.points; i++) {
+            ctx.drawImage(pointImage, (pointImage.width + 5) * (i), 2);
         }
     };
 
@@ -214,6 +238,7 @@ var hud = (function() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
         drawLives();
+        drawPoints();
 
         textElements.forEach(function(options) {
             drawText(options);
@@ -221,7 +246,6 @@ var hud = (function() {
     }
 
     return {
-        drawText: drawText,
         render: render,
         textElements: textElements
     };

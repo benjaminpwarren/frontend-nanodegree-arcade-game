@@ -178,11 +178,38 @@ var Engine = (function(global) {
             });
         });
 
-        if (player.x < border.left) {player.x = border.left; console.log('left')};
-        if (player.x > border.left + border.width - player.img.width) {player.x = border.left + border.width - player.img.width; console.log('right')};
-        if (player.y < border.top) {player.y = border.top; console.log('top')};
+        if (player.x < border.left) {
+            player.x = border.left;
+        };
+        if (player.x > border.left + border.width - player.img.width) {
+            player.x = border.left + border.width - player.img.width;
+        };
         //TODO: remove magic number 4 and calculate correctly.
-        if (player.y > border.top + border.height - player.img.height) {player.y = border.top + border.height - player.img.height - 4; console.log('bottom')};
+        if (player.y > border.top + border.height - player.img.height) {
+            player.y = border.top + border.height - player.img.height - 4;
+        };
+
+        if (player.y < border.top) {
+            player.y = border.top;
+
+            player.points += 1;
+            if (player.points >= player.maxPoints) {
+
+                running = false;
+
+                hud.textElements.push({
+                    text: 'YOU WON!',
+                    lineWidth: 3,
+                    fillStyle: 'yellow',
+                    strokeStyle: 'black',
+                    font: '80pt \'IMPACT\'',
+                    position: 'center center',
+                    padding: '1'
+                });
+            } else {
+                player.spawn();
+            }
+        };
     }
 
     /*
@@ -332,6 +359,8 @@ var Engine = (function(global) {
     resources['images/water-block.png'] = {};
     resources['images/grass-block.png'] = {};
     resources['images/Heart-small.png'] = {};
+    resources['images/Gem Orange-small.png'] = {};
+    resources['images/Gem Orange outline-small.png'] = {};
 
     resources['images/enemy-bug.png'] = {
         boundingBox: {
