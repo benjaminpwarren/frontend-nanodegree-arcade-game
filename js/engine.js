@@ -38,7 +38,9 @@ var Engine = (function(global) {
 
     canvas.width = 505;
     canvas.height = 606;
-    doc.body.appendChild(canvas);
+    doc.getElementById('wall').appendChild(canvas);
+
+    var running = true;
 
     /* This function serves as the kickoff point for the game loop itself
      * and handles properly calling the update and render methods.
@@ -67,7 +69,10 @@ var Engine = (function(global) {
         /* Use the browser's requestAnimationFrame function to call this
          * function again as soon as the browser is able to draw another frame.
          */
-        win.requestAnimationFrame(main);
+
+        if (running) {
+            win.requestAnimationFrame(main);
+        }
     }
 
     /* This function does some initial setup that should only occur once,
@@ -111,7 +116,7 @@ var Engine = (function(global) {
     function checkCollisions() {
 
         //if player hasn't been fully constructed yet, exit
-        if (!player.resource) {
+        if (!player.resource || !player.x) {
             return;
         }
 
@@ -121,10 +126,29 @@ var Engine = (function(global) {
         allEnemies.forEach(function(enemy) {
             var enemyBox = getBoundingBox(enemy);
 
-            //if there's an overlap, respawn the player
+            //if there's an overlap, reduce lives respawn the player or terminate player.
             if (overlap(playerBox, enemyBox)) {
-                player = new Player();
-                //enemy.speed = 0;
+                console.log(playerBox, enemyBox);
+                player.lives += -1;
+
+                if (player.lives === 0) {
+                    //reset();
+                    running = false;
+
+                    hud.drawText({
+                        text: 'GAME OVER!',
+                        lineWidth: 3,
+                        fillStyle: 'red',
+                        strokeStyle: 'black',
+                        font: '80pt \'IMPACT\'',
+                        position: 'center center',
+                        padding: '1'
+                    });
+
+                } else {
+                    player.spawn();
+                }
+
             }
 
             //loop through all enemies and reduce speed to same if enemy hits another enemy
@@ -259,6 +283,8 @@ var Engine = (function(global) {
         });
 
         player.render();
+
+        hud.render();
     }
 
     /* This function does nothing but it could have been a good place to
@@ -279,6 +305,7 @@ var Engine = (function(global) {
     resources['images/stone-block.png'] = {};
     resources['images/water-block.png'] = {};
     resources['images/grass-block.png'] = {};
+    resources['images/Heart-small.png'] = {};
 
     resources['images/enemy-bug.png'] = {
         boundingBox: {

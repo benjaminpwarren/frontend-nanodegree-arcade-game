@@ -35,8 +35,8 @@ Enemy.prototype.update = function(dt) {
     this.x = this.x + (this.speed * dt);
 
     if (this.x > ctx.canvas.width) {
-       allEnemies.splice(allEnemies.indexOf(this), 1);
-       allEnemies.push(new Enemy());
+        allEnemies.splice(allEnemies.indexOf(this), 1);
+        allEnemies.push(new Enemy());
     }
 };
 
@@ -63,6 +63,13 @@ var Player = function() {
     this.img = Resources.get(this.sprite);
     this.resource = resources[this.sprite];
 
+    this.lives = 5;
+
+    this.spawn();
+};
+
+Player.prototype.spawn = function() {
+
     var startTile = {
         col: 3,
         row: 6
@@ -71,8 +78,7 @@ var Player = function() {
     var spriteOffsetY = this.resource.feetCenterY - (tile.height / 2 + tile.topOffset);
     this.x = (startTile.col - 1) * tile.width;
     this.y = (startTile.row - 1) * tile.height - spriteOffsetY;
-
-};
+}
 
 Player.prototype.update = function(dt) {
 
@@ -120,7 +126,16 @@ Player.prototype.handleInput = function(key) {
     }
 };
 
-var hud = function() {
+var hud = (function() {
+
+    var canvas = document.createElement('canvas');
+    canvas.width = window.ctx.canvas.width;
+    canvas.height = window.ctx.canvas.height;
+    canvas.style.backgroundColor = 'transparent';
+
+    var ctx = canvas.getContext('2d');
+
+    document.getElementById('wall').appendChild(canvas);
 
     function drawText(options) {
 
@@ -185,11 +200,23 @@ var hud = function() {
 
     }
 
-    drawText({
-        text: 'Lives: *****',
-        position: 'right top'
-    });
-};
+    var drawLives = function() {
+        var lifeImage = Resources.get('images/Heart-small.png');
+
+        for (var i = 0; i < player.lives; i++) {
+            ctx.drawImage(lifeImage, ctx.canvas.width - (25 + 5) * (i + 1), 5);
+        }
+    };
+
+    function render() {
+        drawLives();
+    }
+
+    return {
+        drawText: drawText,
+        render: render
+    };
+})();
 
 // Now instantiate your objects.
 // Place all enemy objects in an array called allEnemies
