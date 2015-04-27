@@ -182,9 +182,10 @@ var hud = (function() {
 
         switch (positionMatches[1]) {
             case 'top':
+                position.y += tile.topOffset;
                 break;
             case 'center':
-                position.y = ctx.canvas.height / 2;
+                position.y = ctx.canvas.height / 2 + tile.topOffset;
                 break;
             case 'bottom':
                 position.y = ctx.canvas.height - opts.padding;
@@ -194,7 +195,6 @@ var hud = (function() {
 
         ctx.fillText(opts.text, position.x, position.y);
         ctx.strokeText(opts.text, position.x, position.y);
-
     }
 
     var drawLives = function() {
