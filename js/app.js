@@ -47,10 +47,6 @@ Enemy.prototype.render = function() {
     ctx.lineWidth = 2;
     ctx.strokeRect(this.x, this.y, this.img.width, this.img.height);
 
-    //draw bounding box border
-    var boundingBox = this.resource.boundingBox;
-    ctx.strokeStyle = '#0f0';
-    ctx.strokeRect(this.x + boundingBox.topLeft.x, this.y + boundingBox.topLeft.y, boundingBox.bottomRight.x - boundingBox.topLeft.x, boundingBox.bottomRight.y - boundingBox.topLeft.y);
 };
 
 // Now write your own player class
@@ -95,11 +91,6 @@ Player.prototype.render = function() {
     ctx.strokeStyle = '#00f';
     ctx.lineWidth = 2;
     ctx.strokeRect(this.x, this.y, this.img.width, this.img.height);
-
-    //draw bounding box border
-    var boundingBox = this.resource.boundingBox;
-    ctx.strokeStyle = '#0f0';
-    ctx.strokeRect(this.x + boundingBox.topLeft.x, this.y + boundingBox.topLeft.y, boundingBox.bottomRight.x - boundingBox.topLeft.x, boundingBox.bottomRight.y - boundingBox.topLeft.y);
 
 };
 

@@ -115,24 +115,60 @@ var Engine = (function(global) {
             return;
         }
 
-        var playerBox = getBoundingBox(player);
+        //var playerBox = getBoundingBox(player);
+        var playerBox = getAdjBoundingBox(player);
 
         allEnemies.forEach(function(enemy) {
             var enemyBox = getBoundingBox(enemy);
 
             if (overlap(playerBox, enemyBox)) {
-                player = new Player();
+                //player = new Player();
+                enemy.speed = 0;
             }
         });
     }
 
+    /*function dev_drawBoundingBoxBorder(boundingBox){
+        //draw bounding box border //TODO remove.
+        ctx.strokeStyle = '#0f0';
+        ctx.lineWidth = 2;
+        ctx.strokeRect(boundingBox.left, boundingBox.top, boundingBox.width, boundingBox.height);
+    }*/
+
     function getBoundingBox(entity) {
-        return {
-            top: entity.y + entity.resource.boundingBox.topLeft.y,
-            right: entity.x + entity.resource.boundingBox.bottomRight.x,
-            bottom: entity.y + entity.resource.boundingBox.bottomRight.y,
-            left: entity.x + entity.resource.boundingBox.topLeft.x
-        };
+
+        var box = Object.assign({}, entity.resource.boundingBox);
+
+        box.left += entity.x;
+        box.top += entity.y;
+        box.right = box.left + box.width;
+        box.bottom = box.top + box.height;
+
+        return box;
+    }
+
+    function getAdjBoundingBox(entity) {
+
+        var adjFactor = 0.8;
+
+        var box = entity.resource.boundingBox;
+        var adjBox = Object.assign({}, box);
+
+        adjBox.width = box.width * adjFactor;
+        adjBox.left = adjBox.left + (box.width - adjBox.width) / 2;
+        adjBox.width = Math.round(adjBox.width);
+        adjBox.left = Math.round(adjBox.left);
+        adjBox.height = box.height * adjFactor;
+        adjBox.top = adjBox.top + (box.height - adjBox.height) / 2;
+        adjBox.height = Math.round(adjBox.height);
+        adjBox.top = Math.round(adjBox.top);
+
+        adjBox.left = entity.x + adjBox.left;
+        adjBox.top = entity.y + adjBox.top;
+        adjBox.right = adjBox.left + adjBox.width;
+        adjBox.bottom = adjBox.top + adjBox.height;
+
+        return adjBox;
     }
 
     function overlap(box1, box2) {
@@ -221,28 +257,20 @@ var Engine = (function(global) {
 
     resources['images/enemy-bug.png'] = {
         boundingBox: {
-            topLeft: {
-                x: 1,
-                y: 77
-            },
-            bottomRight: {
-                x: 98,
-                y: 142
-            }
+            left: 1,
+            top: 77,
+            width: 98,
+            height: 66
         },
         feetCenterY: 127
     };
 
     resources['images/char-boy.png'] = {
         boundingBox: {
-            topLeft: {
-                x: 17,
-                y: 63
-            },
-            bottomRight: {
-                x: 83,
-                y: 138
-            }
+            left: 17,
+            top: 63,
+            width: 67,
+            height: 76
         },
         feetCenterY: 133
     };
