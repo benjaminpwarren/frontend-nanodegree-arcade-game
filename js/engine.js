@@ -128,14 +128,20 @@ var Engine = (function(global) {
 
             //if there's an overlap, reduce lives respawn the player or terminate player.
             if (overlap(playerBox, enemyBox)) {
-                console.log(playerBox, enemyBox);
+
                 player.lives += -1;
 
                 if (player.lives === 0) {
-                    //reset();
+
                     running = false;
 
-                    hud.drawText({
+                    /* Trigger render so "intentional" collisions (where player moves
+                       into enemy rather than enemy running into player) actually get
+                       rendered (as checkCollisions is called after update but before
+                       render).                    */
+                    render();
+
+                    hud.textElements.push({
                         text: 'GAME OVER!',
                         lineWidth: 3,
                         fillStyle: 'red',
@@ -237,6 +243,7 @@ var Engine = (function(global) {
         /* This array holds the relative URL to the image used
          * for that particular row of the game level.
          */
+
         var rowImages = [
                 'images/water-block.png', // Top row is water
                 'images/stone-block.png', // Row 1 of 3 of stone
@@ -266,8 +273,9 @@ var Engine = (function(global) {
             }
         }
 
-
         renderEntities();
+
+        hud.render();
     }
 
     /* This function is called by the render function and is called on each game
@@ -284,7 +292,6 @@ var Engine = (function(global) {
 
         player.render();
 
-        hud.render();
     }
 
     /* This function does nothing but it could have been a good place to

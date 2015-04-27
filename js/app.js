@@ -122,7 +122,6 @@ Player.prototype.handleInput = function(key) {
         case 'down':
             this.dy = yDistance;
             break;
-
     }
 };
 
@@ -136,6 +135,8 @@ var hud = (function() {
     var ctx = canvas.getContext('2d');
 
     document.getElementById('wall').appendChild(canvas);
+
+    var textElements = [];
 
     function drawText(options) {
 
@@ -209,12 +210,20 @@ var hud = (function() {
     };
 
     function render() {
+
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
         drawLives();
+
+        textElements.forEach(function(options) {
+            drawText(options);
+        });
     }
 
     return {
         drawText: drawText,
-        render: render
+        render: render,
+        textElements: textElements
     };
 })();
 
