@@ -274,14 +274,6 @@ Resources.onReady(function() {
     });
 });
 
-function isEven(n) {
-    return isNumber(n) && (n % 2 === 0);
-}
-
-function isOdd(n) {
-    return isNumber(n) && (Math.abs(n) % 2 === 1);
-}
-
 function isNumber(n) {
     return n === parseFloat(n);
 }
@@ -294,9 +286,7 @@ function getRandomInt(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-
-//polyfills
-
+//assign polyfill so we can 'merge' ojects
 if (!Object.assign) {
     Object.defineProperty(Object, 'assign', {
         enumerable: false,

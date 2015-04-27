@@ -178,17 +178,22 @@ var Engine = (function(global) {
             });
         });
 
+        //If player is attempting to move left off the board.
         if (player.x < border.left) {
             player.x = border.left;
         };
+        //If player is attempting to move right off the board.
+        //TODO add helper methods to objs with dimensions to can just say e.g. player.right
         if (player.x > border.left + border.width - player.img.width) {
             player.x = border.left + border.width - player.img.width;
         };
+        //If player is attempting to move down off the board.
         //TODO: remove magic number 4 and calculate correctly.
         if (player.y > border.top + border.height - player.img.height) {
             player.y = border.top + border.height - player.img.height - 4;
         };
 
+        //If player reaches the top, reward and win game or respawn.
         if (player.y < border.top) {
             player.y = border.top;
 
@@ -212,19 +217,6 @@ var Engine = (function(global) {
         };
     }
 
-    /*
-    had moved this here to clean up app.js code but it doesn't work when put with the
-    collision stuff above, presumably because the tile repaint happens immediately
-    after the collision stuff (so the borders are drawn, they're just painted over
-    immediately).
-
-    function dev_drawBoundingBoxBorder(boundingBox){
-        //draw bounding box border //TODO remove.
-        ctx.strokeStyle = '#0f0';
-        ctx.lineWidth = 2;
-        ctx.strokeRect(boundingBox.left, boundingBox.top, boundingBox.width, boundingBox.height);
-    }*/
-
     /* Get the resource's bounding box and update to current position */
     function getBoundingBox(entity) {
 
@@ -239,10 +231,13 @@ var Engine = (function(global) {
     }
 
     /* Get the resource's bounding box and adjust it based on a factor, and
-       update to current position. When using bounding boxes, a factor of 0.8
-       makes for more visually realistic collisions due to bounding boxes being
-       a very approximate representation of the entity's shape.*/
+       update to current position.
+       When using bounding boxes, a factor of 0.8 makes for more visually realistic
+       collisions due to bounding boxes being a very approximate representation of the
+       entity's shape.*/
     function getAdjBoundingBox(entity) {
+
+        //TODO tidy and add helper methods.
 
         var adjFactor = 0.8;
 
@@ -267,7 +262,8 @@ var Engine = (function(global) {
     }
 
     function overlap(box1, box2) {
-        return !((box1.bottom < box2.top) ||
+        return !(
+            (box1.bottom < box2.top) ||
             (box1.top > box2.bottom) ||
             (box1.left > box2.right) ||
             (box1.right < box2.left));
@@ -283,6 +279,20 @@ var Engine = (function(global) {
         /* This array holds the relative URL to the image used
          * for that particular row of the game level.
          */
+
+        /* TODO map drawing to use an array instead of loops so maps can be specified
+           like: ['wwwww',
+                  'sssss',
+                  'ggggg',
+                  'ggggg',
+                  'ggggg',
+                  'ggggg']
+
+           where w, s, and g refer to water-block, stone-block, and grass-block.
+
+           This will allow new levels/maps to be defined quickly as they will be easy
+           to visualise.
+        */
 
         var rowImages = [
                 'images/water-block.png', // Top row is water
@@ -317,11 +327,6 @@ var Engine = (function(global) {
 
         hud.render();
 
-        /*
-        //border for testing
-        ctx.strokeStyle = '#0f0';
-        ctx.lineWidth = 2;
-        ctx.strokeRect(border.left, border.top, border.width, border.height);*/
     }
 
     /* This function is called by the render function and is called on each game
@@ -346,6 +351,9 @@ var Engine = (function(global) {
      */
     function reset() {
         // noop
+
+        //TODO implement new game/start again option
+        //TODO implement character selection
     }
 
     /* Go ahead and load all of the images we know we're going to need to
