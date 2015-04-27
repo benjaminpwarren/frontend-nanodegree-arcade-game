@@ -42,14 +42,7 @@ Enemy.prototype.update = function(dt) {
 
 // Draw the enemy on the screen, required method for game
 Enemy.prototype.render = function() {
-
-    ctx.drawImage(this.img, this.x, this.y);
-
-    //border for testing
-    ctx.strokeStyle = '#f00';
-    ctx.lineWidth = 2;
-    ctx.strokeRect(this.x, this.y, this.img.width, this.img.height);
-
+    ctx.drawImage(this.img, this.x, this.y);;
 };
 
 // Now write your own player class
@@ -103,14 +96,7 @@ Player.prototype.update = function(dt) {
 };
 
 Player.prototype.render = function() {
-
     ctx.drawImage(this.img, this.x, this.y);
-
-    //border for testing
-    ctx.strokeStyle = '#00f';
-    ctx.lineWidth = 2;
-    ctx.strokeRect(this.x, this.y, this.img.width, this.img.height);
-
 };
 
 Player.prototype.handleInput = function(key) {
@@ -223,18 +209,19 @@ var hud = (function() {
         var pointSpaceImage = Resources.get('images/Gem Orange outline-small.png');
 
         for (var i = 0; i < player.maxPoints; i++) {
-            ctx.drawImage(pointSpaceImage, (pointSpaceImage.width + 5) * (i), 2);
+            ctx.drawImage(pointSpaceImage, (pointSpaceImage.width + 5) * i, 2);
         }
 
         var pointImage = Resources.get('images/Gem Orange-small.png');
 
         for (var i = 0; i < player.points; i++) {
-            ctx.drawImage(pointImage, (pointImage.width + 5) * (i), 2);
+            ctx.drawImage(pointImage, (pointImage.width + 5) * i, 2);
         }
     };
 
     function render() {
 
+        //clear hud
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
         drawLives();
@@ -266,6 +253,7 @@ player.render = function() {};
 
 Resources.onReady(function() {
 
+    allEnemies.push(new Enemy());
     allEnemies.push(new Enemy());
     allEnemies.push(new Enemy());
     allEnemies.push(new Enemy());
