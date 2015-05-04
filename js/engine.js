@@ -194,7 +194,8 @@ var Engine = (function(global) {
         };
 
         //If player reaches the top, reward and win game or respawn.
-        if (player.y < border.top) {
+        //TODO: fix magic number
+        if (player.y + 9 < border.top) {
             player.y = border.top;
 
             player.points += 1;
