@@ -25,6 +25,22 @@ Entity.prototype.render = function() {
     ctx.drawImage(this.img, this.x, this.y);
 };
 
+Entity.prototype.left = function(){
+    return this.x;
+};
+
+Entity.prototype.right = function(){
+    return this.x + this.img.width;
+};
+
+Entity.prototype.top = function(){
+    return this.y;
+};
+
+Entity.prototype.bottom = function(){
+    return this.y + this.img.height;
+};
+
 // Enemies our player must avoid
 var Enemy = function(options) {
 
