@@ -172,7 +172,7 @@ var hud = (function() {
         ctx.fillStyle = opts.fillStyle;
         ctx.strokeStyle = opts.strokeStyle;
 
-        var positionMatches = /(left|center|right)?\s?(top|center|bottom)?/.exec(opts.position);
+        var positionMatches = /(top|center|bottom)?\s?(left|center|right)?/.exec(opts.position);
 
         //assume center if horizontal or vertical not provided.
         positionMatches[1] = positionMatches[1] ? positionMatches[1] : 'center';
@@ -183,20 +183,7 @@ var hud = (function() {
             y: opts.padding
         };
 
-        ctx.textAlign = positionMatches[1];
-
-        switch (positionMatches[1]) {
-            case 'left':
-                break;
-            case 'center':
-                position.x = ctx.canvas.width / 2;
-                break;
-            case 'right':
-                position.x = ctx.canvas.width - opts.padding;
-                break;
-        }
-
-        ctx.textBaseline = positionMatches[2];
+        ctx.textBaseline = positionMatches[1];
 
         switch (positionMatches[1]) {
             case 'top':
@@ -207,7 +194,19 @@ var hud = (function() {
                 break;
             case 'bottom':
                 position.y = ctx.canvas.height - opts.padding;
+                break;
+        }
 
+        ctx.textAlign = positionMatches[2];
+
+        switch (positionMatches[2]) {
+            case 'left':
+                break;
+            case 'center':
+                position.x = ctx.canvas.width / 2;
+                break;
+            case 'right':
+                position.x = ctx.canvas.width - opts.padding;
                 break;
         }
 
@@ -215,6 +214,7 @@ var hud = (function() {
         ctx.strokeText(opts.text, position.x, position.y);
     }
 
+    // Draws the player's remaining lives
     var drawLives = function() {
         var lifeImage = Resources.get('images/Heart-small.png');
 
@@ -223,6 +223,7 @@ var hud = (function() {
         }
     };
 
+    // Draws the maximum possible points and the player's current score
     var drawPoints = function() {
         var pointSpaceImage = Resources.get('images/Gem Orange outline-small.png');
 
@@ -260,22 +261,26 @@ var hud = (function() {
 // Place all enemy objects in an array called allEnemies
 // Place the player object in a variable called player
 
-// Shells and stubs so Engine Update and Render calls don't fail.
-/* Doing it this way as we need to wait for the resources to load before instantiating
-   our objects as our objects use properties such as the width and height of the sprites
+/* Shells and stubs so Engine Update and Render calls don't fail.
+   Doing it this way as we need to wait for the resources to load before instantiating
+   our objects as our objects use properties such as the width and height of the
+   sprites.
 */
 var allEnemies = [];
 var player = [];
 player.update = function() {};
 player.render = function() {};
 
+// Once our resources have been loaded, create enemies and player and input events
 Resources.onReady(function() {
 
+    //create some enemies
     allEnemies.push(new Enemy());
     allEnemies.push(new Enemy());
     allEnemies.push(new Enemy());
     allEnemies.push(new Enemy());
 
+    //create the player
     player = new Player();
 
     // This listens for key presses and sends the keys to your
@@ -291,10 +296,6 @@ Resources.onReady(function() {
         player.handleInput(allowedKeys[e.keyCode]);
     });
 });
-
-function isNumber(n) {
-    return n === parseFloat(n);
-}
 
 /**
  * Returns a random integer between min (inclusive) and max (inclusive)
