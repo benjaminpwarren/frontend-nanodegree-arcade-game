@@ -1,13 +1,14 @@
 'use strict';
 
+/* global Resources, resources, tile, ctx */
+
 var Entity = function(options) {
 
-  this.sprite = options.sprite;
-  this.img = Resources.get(this.sprite);
-  this.resource = resources[this.sprite];
+    this.sprite = options.sprite;
+    this.img = Resources.get(this.sprite);
+    this.resource = resources[this.sprite];
 
-  this.baseSpeed = 200;
-
+    this.baseSpeed = 200;
 };
 
 Entity.prototype.spawn = function(startTile) {
@@ -17,7 +18,7 @@ Entity.prototype.spawn = function(startTile) {
     var spriteOffsetY = this.resource.feetCenterY - (tile.height / 2 + tile.topOffset);
     this.x = (startTile.col - 1) * tile.width;
     this.y = (startTile.row - 1) * tile.height - Math.round(spriteOffsetY);
-}
+};
 
 // Draw the entity on the screen
 Entity.prototype.render = function() {
@@ -25,30 +26,30 @@ Entity.prototype.render = function() {
 };
 
 // Enemies our player must avoid
-var Enemy = function() {
-    // Variables applied to each of our instances go here,
-    // we've provided one for you to get started
+var Enemy = function(options) {
 
-    // The image/sprite for our enemies, this uses
-    // a helper we've provided to easily load images
-    this.sprite = 'images/enemy-bug.png';
-    this.img = Resources.get(this.sprite);
-    this.resource = resources[this.sprite];
-
-    var baseSpeed = 200;
-    //give the enemy one of three speeds: 1/2 base speed, base speed, or 1 1/2 base speed.
-    var speedFactor = getRandomInt(1, 3) / 2 - 1;
-    this.speed = baseSpeed + baseSpeed * speedFactor;
-
-    var startTile = {
-        col: -3 + getRandomInt(1, 3) / 2, //start the enemy on tile -2, -1, or 0
-        row: getRandomInt(2, 4)
+    var defaults = {
+        sprite: 'images/enemy-bug.png',
+        startTile: {
+            col: -3 + getRandomInt(1, 3) / 2, //start the enemy on tile -2, -1, or 0
+            row: getRandomInt(2, 4)
+        }
     };
 
-    var spriteOffsetY = this.resource.feetCenterY - (tile.height / 2 + tile.topOffset);
-    this.x = (startTile.col - 1) * tile.width;
-    this.y = (startTile.row - 1) * tile.height - spriteOffsetY;
+    this.options = Object.assign({}, defaults, options);
+
+    Entity.call(this, this.options);
+
+    //give the enemy one of three speeds: 1/2 base speed, base speed, or 1 1/2 base speed.
+    var speedFactor = getRandomInt(1, 3) / 2 - 1;
+    this.speed = this.baseSpeed + this.baseSpeed * speedFactor;
+
+    this.startTile = this.options.startTile;
+
+    this.spawn();
 };
+
+Enemy.prototype = Object.create(Entity.prototype);
 
 // Update the enemy's position, required method for game
 // Parameter: dt, a time delta between ticks
@@ -65,11 +66,6 @@ Enemy.prototype.update = function(dt) {
     }
 };
 
-// Draw the enemy on the screen, required method for game
-Enemy.prototype.render = function() {
-    ctx.drawImage(this.img, this.x, this.y);;
-};
-
 // Now write your own player class
 // This class requires an update(), render() and
 // a handleInput() method.
@@ -77,12 +73,15 @@ Enemy.prototype.render = function() {
 var Player = function(options) {
 
     var defaults = {
-      sprite: 'images/char-boy.png',
-      lives: 5,
-      points: 0,
-      maxPoints: 10,
-      startTile: {col: 3, row:6}
-    }
+        sprite: 'images/char-boy.png',
+        lives: 5,
+        points: 0,
+        maxPoints: 10,
+        startTile: {
+            col: 3,
+            row: 6
+        }
+    };
 
     this.options = Object.assign({}, defaults, options);
 
@@ -93,11 +92,14 @@ var Player = function(options) {
     this.maxPoints = this.options.maxPoints;
     this.startTile = this.options.startTile;
 
+    this.spawn();
 };
+
 
 Player.prototype = Object.create(Entity.prototype);
 
-Player.prototype.update = function(dt) {
+// Update the player's position
+Player.prototype.update = function() {
 
     if (this.dx) {
         this.x += this.dx;
@@ -109,8 +111,8 @@ Player.prototype.update = function(dt) {
 
 };
 
+//handles player input to move character etc.
 Player.prototype.handleInput = function(key) {
-    //handles player input to move character etc.
 
     var xDistance = tile.width;
     var yDistance = tile.height;
@@ -131,6 +133,9 @@ Player.prototype.handleInput = function(key) {
     }
 };
 
+/* hud = Heads Up Display. Allows information and messages to be overlayed on the game
+   canvas e.g. points, lives remaining, and win/game over messages. */
+
 var hud = (function() {
 
     var canvas = document.createElement('canvas');
@@ -144,6 +149,9 @@ var hud = (function() {
 
     var textElements = [];
 
+    /* Draw text on the screen with the options provided by the caller or using the
+       defaults. Desired position is specified using 'top center' or 'center right', etc.
+       Text will be 'top center' unless specified. */
     function drawText(options) {
 
         var defaults = {
@@ -224,7 +232,7 @@ var hud = (function() {
 
         var pointImage = Resources.get('images/Gem Orange-small.png');
 
-        for (var i = 0; i < player.points; i++) {
+        for (i = 0; i < player.points; i++) {
             ctx.drawImage(pointImage, (pointImage.width + 5) * i, 2);
         }
     };
@@ -269,7 +277,6 @@ Resources.onReady(function() {
     allEnemies.push(new Enemy());
 
     player = new Player();
-    player.spawn();
 
     // This listens for key presses and sends the keys to your
     // Player.handleInput() method. You don't need to modify this.
