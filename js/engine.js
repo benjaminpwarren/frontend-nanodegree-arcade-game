@@ -133,7 +133,7 @@ var Engine = (function(global) {
         allEnemies.forEach(function(enemy) {
             var enemyBox = getBoundingBox(enemy);
 
-            //if there's an overlap, reduce lives respawn the player or terminate player.
+            //if there's an overlap, reduce lives, and respawn the player or terminate player.
             if (overlap(playerBox, enemyBox)) {
 
                 player.lives += -1;
@@ -142,10 +142,10 @@ var Engine = (function(global) {
 
                     running = false;
 
-                    /* Trigger render so "intentional" collisions (where player moves
-                       into enemy rather than enemy running into player) actually get
-                       rendered (as checkCollisions is called after update but before
-                       render).                    */
+                    /* Trigger render so "intentional" collisions (where player
+                       moves into enemy rather than enemy running into player)
+                       actually get rendered (as checkCollisions is called after
+                       update but before render).*/
                     render();
 
                     hud.textElements.push({
@@ -164,8 +164,26 @@ var Engine = (function(global) {
 
             }
 
-            //loop through all enemies and reduce speed to same if enemy hits another enemy
-            allEnemies.forEach(function(enemy2) {
+            //loop through all enemies and reduce speed to same if enemy hits
+            //another enemy
+
+            /* NOTE: first reviewer mentioned that the game 'looks a little
+               jittery' but I can't see any jitter and Chrome tells me that it
+               runs at 59.9/60 FPS so I can't test without more info about the
+               reviewer's system.
+
+               However, I've added some more 'exit early' conditions to reduce
+               the number of calculations so perhaps this will improve things on
+               the reviewer's machine.
+             */
+               allEnemies.forEach(function(enemy2) {
+
+                //if they're not in the same row, skip further checks as
+                //enemies only move along x axis
+                if (enemy2.y !== enemy.y) return;
+
+                //if enemy2 is behind and going slower, skip full overlap check
+                if (enemy2.speed <= enemy.speed && enemy2.x < enemy.x - enemy.img.width) return;
 
                 if (enemy2 === enemy) return;
 
@@ -183,7 +201,8 @@ var Engine = (function(global) {
             player.x = border.left;
         };
         //If player is attempting to move right off the board.
-        //TODO add helper methods to objs with dimensions to can just say e.g. player.right
+        //TODO add helper methods to objs with dimensions to can just say e.g.
+        //player.right
         if (player.x > border.left + border.width - player.img.width) {
             player.x = border.left + border.width - player.img.width;
         };
