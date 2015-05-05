@@ -16,6 +16,7 @@
 
 'use strict';
 
+// globals player
 //TODO: refactor so not polluting global namespace
 
 var Engine = (function(global) {
@@ -126,7 +127,7 @@ var Engine = (function(global) {
             return;
         }
 
-        var playerBox = getAdjBoundingBox(player);
+        var playerBox = getBoundingBox(player);
 
         allEnemies.forEach(function(enemy) {
             var enemyBox = getBoundingBox(enemy);
@@ -174,7 +175,7 @@ var Engine = (function(global) {
                the number of calculations so perhaps this will improve things on
                the reviewer's machine.
              */
-               allEnemies.forEach(function(enemy2) {
+            allEnemies.forEach(function(enemy2) {
 
                 //if they're not in the same row, skip further checks as
                 //enemies only move along x axis
@@ -246,37 +247,6 @@ var Engine = (function(global) {
         box.bottom = box.top + box.height;
 
         return box;
-    }
-
-    /* Get the resource's bounding box and adjust it based on a factor, and
-       update to current position.
-       When using bounding boxes, a factor of 0.8 makes for more visually realistic
-       collisions due to bounding boxes being a very approximate representation of the
-       entity's shape.*/
-    function getAdjBoundingBox(entity) {
-
-        //TODO tidy and add helper methods.
-
-        var adjFactor = 0.8;
-
-        var box = entity.resource.boundingBox;
-        var adjBox = Object.assign({}, box);
-
-        adjBox.width = box.width * adjFactor;
-        adjBox.left = adjBox.left + (box.width - adjBox.width) / 2;
-        adjBox.width = Math.round(adjBox.width);
-        adjBox.left = Math.round(adjBox.left);
-        adjBox.height = box.height * adjFactor;
-        adjBox.top = adjBox.top + (box.height - adjBox.height) / 2;
-        adjBox.height = Math.round(adjBox.height);
-        adjBox.top = Math.round(adjBox.top);
-
-        adjBox.left = entity.x + adjBox.left;
-        adjBox.top = entity.y + adjBox.top;
-        adjBox.right = adjBox.left + adjBox.width;
-        adjBox.bottom = adjBox.top + adjBox.height;
-
-        return adjBox;
     }
 
     function overlap(box1, box2) {
@@ -400,10 +370,10 @@ var Engine = (function(global) {
 
     resources['images/char-boy.png'] = {
         boundingBox: {
-            left: 17,
-            top: 63,
-            width: 67,
-            height: 76
+            left: 24,
+            top: 71,
+            width: 54,
+            height: 61
         },
         feetCenterY: 133
     };
