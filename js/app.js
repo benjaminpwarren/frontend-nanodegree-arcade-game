@@ -8,9 +8,9 @@ var Entity = function(options) {
     this.img = Resources.get(this.sprite);
     this.resource = resources[this.sprite];
 
-    this.baseSpeed = 200;
 };
 
+// Set the entity start position based on startTile param or option.
 Entity.prototype.spawn = function(startTile) {
 
     startTile = startTile || this.options.startTile;
@@ -25,6 +25,7 @@ Entity.prototype.render = function() {
     ctx.drawImage(this.img, this.x, this.y);
 };
 
+/* TODO: remove?
 // Helper methods
 
 Entity.prototype.left = function(){
@@ -42,7 +43,7 @@ Entity.prototype.top = function(){
 Entity.prototype.bottom = function(){
     return this.y + this.img.height;
 };
-
+*/
 // Enemies our player must avoid
 var Enemy = function(options) {
 
@@ -59,8 +60,10 @@ var Enemy = function(options) {
     Entity.call(this, this.options);
 
     //give the enemy one of three speeds: 1/2 base speed, base speed, or 1 1/2 base speed.
+
+    var baseSpeed = 200;
     var speedFactor = getRandomInt(1, 3) / 2 - 1;
-    this.speed = this.baseSpeed + this.baseSpeed * speedFactor;
+    this.speed = baseSpeed + baseSpeed * speedFactor;
 
     this.startTile = this.options.startTile;
 
