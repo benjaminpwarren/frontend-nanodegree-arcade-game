@@ -136,7 +136,7 @@ var Engine = (function(global) {
             //if there's an overlap, reduce lives, and respawn the player or terminate player.
             if (overlap(playerBox, enemyBox)) {
 
-                player.lives += -1;
+                player.lives -= 1;
 
                 if (player.lives === 0) {
 
