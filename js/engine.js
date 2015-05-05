@@ -73,11 +73,10 @@ var Engine = (function(global) {
          */
         lastTime = now;
 
-        /* Use the browser's requestAnimationFrame function to call this
-         * function again as soon as the browser is able to draw another frame.
-         */
-
         if (running) {
+            /* Use the browser's requestAnimationFrame function to call this
+             * function again as soon as the browser is able to draw another frame.
+             */
             win.requestAnimationFrame(main);
         }
     }
@@ -127,7 +126,6 @@ var Engine = (function(global) {
             return;
         }
 
-        //var playerBox = getBoundingBox(player);
         var playerBox = getAdjBoundingBox(player);
 
         allEnemies.forEach(function(enemy) {
