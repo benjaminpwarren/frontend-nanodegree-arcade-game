@@ -25,6 +25,8 @@ Entity.prototype.render = function() {
     ctx.drawImage(this.img, this.x, this.y);
 };
 
+// Helper methods
+
 Entity.prototype.left = function(){
     return this.x;
 };
