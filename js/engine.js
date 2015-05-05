@@ -123,7 +123,7 @@ var Engine = (function(global) {
     function checkCollisions() {
 
         //if player hasn't been fully constructed yet, exit
-        if (!player.resource || !player.x) {
+        if (!player.resource || !('x' in player)) {
             return;
         }
 
