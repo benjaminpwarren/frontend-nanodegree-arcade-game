@@ -1,4 +1,29 @@
 'use strict';
+
+var Entity = function(options) {
+
+  this.sprite = options.sprite;
+  this.img = Resources.get(this.sprite);
+  this.resource = resources[this.sprite];
+
+  this.baseSpeed = 200;
+
+};
+
+Entity.prototype.spawn = function(startTile) {
+
+    startTile = startTile || this.options.startTile;
+
+    var spriteOffsetY = this.resource.feetCenterY - (tile.height / 2 + tile.topOffset);
+    this.x = (startTile.col - 1) * tile.width;
+    this.y = (startTile.row - 1) * tile.height - Math.round(spriteOffsetY);
+}
+
+// Draw the entity on the screen
+Entity.prototype.render = function() {
+    ctx.drawImage(this.img, this.x, this.y);
+};
+
 // Enemies our player must avoid
 var Enemy = function() {
     // Variables applied to each of our instances go here,
@@ -49,8 +74,6 @@ Enemy.prototype.render = function() {
 // This class requires an update(), render() and
 // a handleInput() method.
 
-/* TODO: refactor Player and Enemy to use same parent class? Their constructors are
-   virtually identical. As are their render functions.*/
 var Player = function(options) {
 
     var defaults = {
@@ -63,25 +86,16 @@ var Player = function(options) {
 
     this.options = Object.assign({}, defaults, options);
 
-    this.sprite = this.options.sprite;
-    this.img = Resources.get(this.sprite);
-    this.resource = resources[this.sprite];
+    Entity.call(this, this.options);
 
     this.lives = this.options.lives;
     this.points = this.options.points;
     this.maxPoints = this.options.maxPoints;
+    this.startTile = this.options.startTile;
 
-    this.spawn();
 };
 
-Player.prototype.spawn = function(startTile) {
-
-    startTile = startTile || this.options.startTile;
-
-    var spriteOffsetY = this.resource.feetCenterY - (tile.height / 2 + tile.topOffset);
-    this.x = (startTile.col - 1) * tile.width;
-    this.y = (startTile.row - 1) * tile.height - Math.round(spriteOffsetY);
-}
+Player.prototype = Object.create(Entity.prototype);
 
 Player.prototype.update = function(dt) {
 
@@ -93,10 +107,6 @@ Player.prototype.update = function(dt) {
         this.dy = 0;
     }
 
-};
-
-Player.prototype.render = function() {
-    ctx.drawImage(this.img, this.x, this.y);
 };
 
 Player.prototype.handleInput = function(key) {
@@ -259,6 +269,7 @@ Resources.onReady(function() {
     allEnemies.push(new Enemy());
 
     player = new Player();
+    player.spawn();
 
     // This listens for key presses and sends the keys to your
     // Player.handleInput() method. You don't need to modify this.
