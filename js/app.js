@@ -52,8 +52,8 @@ var Enemy = function(options) {
     var defaults = {
         sprite: 'images/enemy-bug.png',
         startTile: {
-            col: -3 + getRandomInt(1, 3) / 2, //start the enemy on tile -2, -1, or 0
-            row: getRandomInt(2, 4)
+            col: -3 + getRandomInt(1, 3) / 2, //start the enemy on tile column -2, -1, or 0
+            row: getRandomInt(2, 4) //start the enemy on a random tile row 2, 3, or 4
         }
     };
 
