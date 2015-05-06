@@ -1,6 +1,6 @@
 'use strict';
 
-/* global Resources, resources, tile, ctx */
+/* global Resources, resources, tile, ctx, drawBoxBorder */
 
 var Entity = function(options) {
 
@@ -25,6 +25,8 @@ Entity.prototype.spawn = function(startTile) {
 // Draw the entity on the screen
 Entity.prototype.render = function() {
     ctx.drawImage(this.img, this.x, this.y);
+    drawBoxBorder(getBoundingBox(this), "#f00");
+    drawBoxBorder(this.box(), "#00f");
 };
 
 // Helper methods
@@ -44,6 +46,17 @@ Entity.prototype.top = function(){
 Entity.prototype.bottom = function(){
     return this.y + this.img.height;
 };
+
+Entity.prototype.box = function(){
+    return {
+        left: this.left(),
+        right: this.right(),
+        top: this.top(),
+        bottom: this.bottom(),
+        width: this.img.width,
+        height: this.img.height
+    };
+}
 
 // Enemies our player must avoid
 var Enemy = function(options) {
@@ -309,6 +322,15 @@ Resources.onReady(function() {
         player.handleInput(allowedKeys[e.keyCode]);
     });
 });
+
+
+//DEV - draw bounding box border //TODO remove.
+function drawBoxBorder(box, borderColor){
+    borderColor = borderColor || '#000';
+    ctx.strokeStyle = borderColor;
+    ctx.lineWidth = 2;
+    ctx.strokeRect(box.left, box.top, box.width, box.height);
+}
 
 /**
  * Returns a random integer between min (inclusive) and max (inclusive)

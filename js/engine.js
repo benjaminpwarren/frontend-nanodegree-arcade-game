@@ -17,6 +17,7 @@
 'use strict';
 
 //TODO: refactor so not polluting global namespace
+/* global player, allEnemies, hud */
 
 var Engine = (function(global) {
     /* Predefine the variables we'll be using within this scope,
@@ -41,15 +42,19 @@ var Engine = (function(global) {
     doc.getElementById('wall').appendChild(canvas);
 
     var border = {
-        top: tile.topOffset,
-        left: 0,
+        x: 0,
+        y: tile.topOffset,
         width: canvas.width,
         height: tile.height * 6
     };
 
-    //calc these for convenience when doing player boundary check.
-    border.right = border.left + border.width;
-    border.bottom = border.top + border.height;
+    //add these for convenience when doing player boundary check.
+    //these don't have to be methods, they could just be values, but this is easier to
+    //understand when they actually get used.
+    border.left = function(){return border.x;};
+    border.top = function(){return border.y;};
+    border.right = function(){return border.x + border.width;};
+    border.bottom = function(){return border.y + border.height;};
 
     var running = true;
 
@@ -201,22 +206,26 @@ var Engine = (function(global) {
         });
 
         // If player is attempting to move left off the board.
-        if (player.left() < border.left) {
-            player.x = border.left;
-        };
+        if (player.left() < border.left()) {
+            player.x = border.left();
+        }
         // If player is attempting to move right off the board.
-        if (player.right() > border.right) {
-            player.x = border.right - player.img.width;
-        };
+        if (player.right() > border.right()) {
+            player.x = border.right() - player.img.width;
+        }
         // If player is attempting to move down off the board.
         //TODO: remove magic number 4 and calculate correctly.
-        if (player.bottom() > border.bottom) {
-            player.y = border.bottom - player.img.height - 4;
-        };
+        if (player.bottom() > border.bottom()) {
+            player.y = border.bottom() - player.img.height - 4;
+        }
         // If player reaches the top, reward and win game or respawn.
         //TODO: fix magic number
-        if (player.top() + 9 < border.top) {
-            player.y = border.top;
+        if (player.top() + 9 < border.top()) {
+            console.log(player.top());
+            console.log(border.top());
+            running = false;
+            player.y = border.top();
+            throw new Error('dev break');
 
             player.points += 1;
             if (player.points >= player.maxPoints) {
@@ -235,7 +244,7 @@ var Engine = (function(global) {
             } else {
                 player.spawn();
             }
-        };
+        }
     }
 
     /* Get the resource's bounding box and update to current position */
@@ -390,4 +399,5 @@ var Engine = (function(global) {
     global.ctx = ctx;
     global.resources = resources;
     global.tile = tile;
+    global.getBoundingBox = getBoundingBox; //DEV - TODO remove
 })(window);
