@@ -27,7 +27,6 @@ Entity.prototype.render = function() {
     ctx.drawImage(this.img, this.x, this.y);
 };
 
-/* TODO: remove?
 // Helper methods
 
 Entity.prototype.left = function(){
@@ -45,7 +44,7 @@ Entity.prototype.top = function(){
 Entity.prototype.bottom = function(){
     return this.y + this.img.height;
 };
-*/
+
 // Enemies our player must avoid
 var Enemy = function(options) {
 

@@ -16,7 +16,6 @@
 
 'use strict';
 
-// globals player
 //TODO: refactor so not polluting global namespace
 
 var Engine = (function(global) {
@@ -47,6 +46,10 @@ var Engine = (function(global) {
         width: canvas.width,
         height: tile.height * 6
     };
+
+    //calc these for convenience when doing player boundary check.
+    border.right = border.left + border.width;
+    border.bottom = border.top + border.height;
 
     var running = true;
 
@@ -188,6 +191,8 @@ var Engine = (function(global) {
 
                 var enemy2Box = getBoundingBox(enemy2);
 
+                // if the enemy bounding boxes overlap, set the second enemy to have
+                // the same speed as the first enemy and position it behind.
                 if (overlap(enemy2Box, enemyBox)) {
                     enemy2.speed = enemy.speed;
                     enemy2.x = enemy.x - enemy.img.width;
@@ -195,25 +200,22 @@ var Engine = (function(global) {
             });
         });
 
-        //If player is attempting to move left off the board.
-        if (player.x < border.left) {
+        // If player is attempting to move left off the board.
+        if (player.left() < border.left) {
             player.x = border.left;
         };
-        //If player is attempting to move right off the board.
-        //TODO add helper methods to objs with dimensions to can just say e.g.
-        //player.right
-        if (player.x > border.left + border.width - player.img.width) {
-            player.x = border.left + border.width - player.img.width;
+        // If player is attempting to move right off the board.
+        if (player.right() > border.right) {
+            player.x = border.right - player.img.width;
         };
-        //If player is attempting to move down off the board.
+        // If player is attempting to move down off the board.
         //TODO: remove magic number 4 and calculate correctly.
-        if (player.y > border.top + border.height - player.img.height) {
-            player.y = border.top + border.height - player.img.height - 4;
+        if (player.bottom() > border.bottom) {
+            player.y = border.bottom - player.img.height - 4;
         };
-
-        //If player reaches the top, reward and win game or respawn.
+        // If player reaches the top, reward and win game or respawn.
         //TODO: fix magic number
-        if (player.y + 9 < border.top) {
+        if (player.top() + 9 < border.top) {
             player.y = border.top;
 
             player.points += 1;
