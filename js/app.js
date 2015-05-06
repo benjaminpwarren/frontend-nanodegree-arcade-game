@@ -7,7 +7,7 @@ var Entity = function(options) {
     this.sprite = options.sprite;
     this.img = Resources.get(this.sprite);
     this.resource = resources[this.sprite];
-
+    this.spriteOffsetY = Math.round(this.resource.feetCenterY - (tile.height / 2 + tile.topOffset));
     this.startTile = options.startTile;
     this.spawn();
 };
@@ -17,9 +17,8 @@ Entity.prototype.spawn = function(startTile) {
 
     startTile = startTile || this.startTile;
 
-    var spriteOffsetY = this.resource.feetCenterY - (tile.height / 2 + tile.topOffset);
     this.x = (startTile.col - 1) * tile.width;
-    this.y = (startTile.row - 1) * tile.height - Math.round(spriteOffsetY);
+    this.y = (startTile.row - 1) * tile.height - this.spriteOffsetY;
 };
 
 // Draw the entity on the screen

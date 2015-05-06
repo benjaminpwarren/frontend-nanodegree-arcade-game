@@ -43,9 +43,9 @@ var Engine = (function(global) {
 
     var border = {
         x: 0,
-        y: tile.topOffset,
+        y: tile.topOffset + 1,
         width: canvas.width,
-        height: tile.height * 6
+        height: tile.height * 6 - 5
     };
 
     //add these for convenience when doing player boundary check.
@@ -214,18 +214,12 @@ var Engine = (function(global) {
             player.x = border.right() - player.img.width;
         }
         // If player is attempting to move down off the board.
-        //TODO: remove magic number 4 and calculate correctly.
         if (player.bottom() > border.bottom()) {
-            player.y = border.bottom() - player.img.height - 4;
+            console.log(player.bottom(), border.bottom());
+            player.y = player.y - tile.height;
         }
         // If player reaches the top, reward and win game or respawn.
-        //TODO: fix magic number
-        if (player.top() + 9 < border.top()) {
-            console.log(player.top());
-            console.log(border.top());
-            running = false;
-            player.y = border.top();
-            throw new Error('dev break');
+        if (player.top() + player.spriteOffsetY + tile.topOffset < border.top()) {
 
             player.points += 1;
             if (player.points >= player.maxPoints) {
