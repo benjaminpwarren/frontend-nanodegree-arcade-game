@@ -8,12 +8,14 @@ var Entity = function(options) {
     this.img = Resources.get(this.sprite);
     this.resource = resources[this.sprite];
 
+    this.startTile = options.startTile;
+    this.spawn();
 };
 
 // Set the entity start position based on startTile param or option.
 Entity.prototype.spawn = function(startTile) {
 
-    startTile = startTile || this.options.startTile;
+    startTile = startTile || this.startTile;
 
     var spriteOffsetY = this.resource.feetCenterY - (tile.height / 2 + tile.topOffset);
     this.x = (startTile.col - 1) * tile.width;
@@ -55,19 +57,14 @@ var Enemy = function(options) {
         }
     };
 
-    this.options = Object.assign({}, defaults, options);
-
-    Entity.call(this, this.options);
+    options = Object.assign({}, defaults, options);
 
     //give the enemy one of three speeds: 1/2 base speed, base speed, or 1 1/2 base speed.
-
     var baseSpeed = 200;
     var speedFactor = getRandomInt(1, 3) / 2 - 1;
     this.speed = baseSpeed + baseSpeed * speedFactor;
 
-    this.startTile = this.options.startTile;
-
-    this.spawn();
+    Entity.call(this, options);
 };
 
 Enemy.prototype = Object.create(Entity.prototype);
@@ -104,18 +101,14 @@ var Player = function(options) {
         }
     };
 
-    this.options = Object.assign({}, defaults, options);
+    options = Object.assign({}, defaults, options);
 
-    Entity.call(this, this.options);
+    this.lives = options.lives;
+    this.points = options.points;
+    this.maxPoints = options.maxPoints;
 
-    this.lives = this.options.lives;
-    this.points = this.options.points;
-    this.maxPoints = this.options.maxPoints;
-    this.startTile = this.options.startTile;
-
-    this.spawn();
+    Entity.call(this, options);
 };
-
 
 Player.prototype = Object.create(Entity.prototype);
 
