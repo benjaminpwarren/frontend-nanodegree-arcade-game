@@ -24,8 +24,8 @@ Entity.prototype.spawn = function(startTile) {
 // Draw the entity on the screen
 Entity.prototype.render = function() {
     ctx.drawImage(this.img, this.x, this.y);
-    drawBoxBorder(getBoundingBox(this), "#f00");
-    drawBoxBorder(this.box(), "#00f");
+    //drawBoxBorder(this.boundingBox(), "#f00");
+    //drawBoxBorder(this.box(), "#00f");
 };
 
 // Helper methods
@@ -46,7 +46,7 @@ Entity.prototype.bottom = function(){
     return this.y + this.img.height;
 };
 
-Entity.prototype.box = function(){
+/*Entity.prototype.box = function(){
     return {
         left: this.left(),
         right: this.right(),
@@ -55,7 +55,20 @@ Entity.prototype.box = function(){
         width: this.img.width,
         height: this.img.height
     };
-}
+};*/
+
+/* Get the resource's bounding box and apply to current position */
+Entity.prototype.boundingBox = function(){
+
+    var box = Object.assign({}, this.resource.boundingBox);
+
+    box.left += this.x;
+    box.top += this.y;
+    box.right = box.left + box.width;
+    box.bottom = box.top + box.height;
+
+    return box;
+};
 
 // Enemies our player must avoid
 var Enemy = function(options) {

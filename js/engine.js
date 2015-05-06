@@ -135,14 +135,12 @@ var Engine = (function(global) {
             return;
         }
 
-        var playerBox = getBoundingBox(player);
+        var playerBox = player.boundingBox();
 
         allEnemies.forEach(function(enemy) {
-            var enemyBox = getBoundingBox(enemy);
 
             //if there's an overlap, reduce lives, and respawn the player or terminate player.
-            if (overlap(playerBox, enemyBox)) {
-
+            if (overlap(playerBox, enemy.boundingBox())) {
                 player.lives -= 1;
 
                 if (player.lives === 0) {
@@ -194,11 +192,9 @@ var Engine = (function(global) {
 
                 if (enemy2 === enemy) return;
 
-                var enemy2Box = getBoundingBox(enemy2);
-
                 // if the enemy bounding boxes overlap, set the second enemy to have
                 // the same speed as the first enemy and position it behind.
-                if (overlap(enemy2Box, enemyBox)) {
+                if (overlap(enemy2.boundingBox(), enemy.boundingBox())) {
                     enemy2.speed = enemy.speed;
                     enemy2.x = enemy.x - enemy.img.width;
                 }
@@ -215,7 +211,6 @@ var Engine = (function(global) {
         }
         // If player is attempting to move down off the board.
         if (player.bottom() > border.bottom()) {
-            console.log(player.bottom(), border.bottom());
             player.y = player.y - tile.height;
         }
         // If player reaches the top, reward and win game or respawn.
@@ -239,19 +234,6 @@ var Engine = (function(global) {
                 player.spawn();
             }
         }
-    }
-
-    /* Get the resource's bounding box and update to current position */
-    function getBoundingBox(entity) {
-
-        var box = Object.assign({}, entity.resource.boundingBox);
-
-        box.left += entity.x;
-        box.top += entity.y;
-        box.right = box.left + box.width;
-        box.bottom = box.top + box.height;
-
-        return box;
     }
 
     function overlap(box1, box2) {
@@ -393,5 +375,4 @@ var Engine = (function(global) {
     global.ctx = ctx;
     global.resources = resources;
     global.tile = tile;
-    global.getBoundingBox = getBoundingBox; //DEV - TODO remove
 })(window);
