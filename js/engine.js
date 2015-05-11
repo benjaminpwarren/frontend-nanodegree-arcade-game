@@ -17,7 +17,7 @@
 'use strict';
 
 //TODO: refactor so not polluting global namespace
-/* global player, allEnemies, hud */
+/* global player, allEnemies, hud, Resources, Enemy, Player */
 
 var Engine = (function(global) {
     /* Predefine the variables we'll be using within this scope,
@@ -51,10 +51,18 @@ var Engine = (function(global) {
     //add these for convenience when doing player boundary check.
     //these don't have to be methods, they could just be values, but this is easier to
     //understand when they actually get used.
-    border.left = function(){return border.x;};
-    border.top = function(){return border.y;};
-    border.right = function(){return border.x + border.width;};
-    border.bottom = function(){return border.y + border.height;};
+    border.left = function() {
+        return border.x;
+    };
+    border.top = function() {
+        return border.y;
+    };
+    border.right = function() {
+        return border.x + border.width;
+    };
+    border.bottom = function() {
+        return border.y + border.height;
+    };
 
     var running = true;
 
@@ -87,6 +95,19 @@ var Engine = (function(global) {
              * function again as soon as the browser is able to draw another frame.
              */
             win.requestAnimationFrame(main);
+        } else {
+
+            hud.textElements.push({
+                text: 'Press \'Y\' to play again.',
+                lineWidth: 2,
+                fillStyle: 'white',
+                strokeStyle: 'black',
+                font: '26pt \'IMPACT\'',
+                position: 'center center',
+                padding: 83
+            });
+
+            render();
         }
     }
 
@@ -96,6 +117,32 @@ var Engine = (function(global) {
      */
     function init() {
         reset();
+
+        //create some enemies
+        allEnemies.push(new Enemy());
+        allEnemies.push(new Enemy());
+        allEnemies.push(new Enemy());
+        allEnemies.push(new Enemy());
+
+        //create the player
+        player = new Player();
+
+        // This listens for key presses and sends the keys to your
+        // Player.handleInput() method. You don't need to modify this.
+        document.addEventListener('keyup', function(e) {
+            var allowedKeys = {
+                37: 'left',
+                38: 'up',
+                39: 'right',
+                40: 'down',
+                89: 'y'
+            };
+
+            player.handleInput(allowedKeys[e.keyCode]);
+        });
+
+        running = true;
+
         lastTime = Date.now();
         main();
     }
@@ -160,7 +207,7 @@ var Engine = (function(global) {
                         strokeStyle: 'black',
                         font: '80pt \'IMPACT\'',
                         position: 'center center',
-                        padding: '1'
+                        padding: 0
                     });
 
                 } else {
@@ -215,11 +262,14 @@ var Engine = (function(global) {
         }
         // If player reaches the top, reward and win game or respawn.
         if (player.top() + player.spriteOffsetY + tile.topOffset < border.top()) {
+            player.y = player.y + tile.height;
 
             player.points += 1;
             if (player.points >= player.maxPoints) {
 
                 running = false;
+
+                render();
 
                 hud.textElements.push({
                     text: 'YOU WON!',
@@ -228,7 +278,7 @@ var Engine = (function(global) {
                     strokeStyle: 'black',
                     font: '80pt \'IMPACT\'',
                     position: 'center center',
-                    padding: '1'
+                    padding: 0
                 });
             } else {
                 player.spawn();
@@ -317,7 +367,6 @@ var Engine = (function(global) {
         });
 
         player.render();
-
     }
 
     /* This function does nothing but it could have been a good place to
@@ -325,10 +374,12 @@ var Engine = (function(global) {
      * those sorts of things. It's only called once by the init() method.
      */
     function reset() {
-        // noop
 
-        //TODO implement new game/start again option
-        //TODO implement character selection
+        //clear enemies
+        allEnemies.length = 0;
+        //clear any text messages from the heads-up display.
+        hud.textElements.length = 0;
+
     }
 
     /* Go ahead and load all of the images we know we're going to need to
@@ -375,4 +426,5 @@ var Engine = (function(global) {
     global.ctx = ctx;
     global.resources = resources;
     global.tile = tile;
+    global.init = init;
 })(window);

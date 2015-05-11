@@ -1,6 +1,6 @@
 'use strict';
 
-/* global Resources, resources, tile, ctx, drawBoxBorder */
+/* global Resources, resources, tile, ctx, drawBoxBorder, init */
 
 var Entity = function(options) {
 
@@ -30,19 +30,19 @@ Entity.prototype.render = function() {
 
 // Helper methods
 
-Entity.prototype.left = function(){
+Entity.prototype.left = function() {
     return this.x;
 };
 
-Entity.prototype.right = function(){
+Entity.prototype.right = function() {
     return this.x + this.img.width;
 };
 
-Entity.prototype.top = function(){
+Entity.prototype.top = function() {
     return this.y;
 };
 
-Entity.prototype.bottom = function(){
+Entity.prototype.bottom = function() {
     return this.y + this.img.height;
 };
 
@@ -58,7 +58,7 @@ Entity.prototype.bottom = function(){
 };*/
 
 /* Get the resource's bounding box and apply to current position */
-Entity.prototype.boundingBox = function(){
+Entity.prototype.boundingBox = function() {
 
     var box = Object.assign({}, this.resource.boundingBox);
 
@@ -168,6 +168,11 @@ Player.prototype.handleInput = function(key) {
         case 'down':
             this.dy = yDistance;
             break;
+        case 'y':
+            if (player.lives === 0 || player.points >= player.maxPoints) {
+                init();
+            }
+            break;
     }
 };
 
@@ -225,10 +230,10 @@ var hud = (function() {
 
         switch (positionMatches[1]) {
             case 'top':
-                position.y += tile.topOffset;
+                position.y += tile.topOffset + opts.padding;
                 break;
             case 'center':
-                position.y = ctx.canvas.height / 2 + tile.topOffset;
+                position.y = ctx.canvas.height / 2 + tile.topOffset + opts.padding;
                 break;
             case 'bottom':
                 position.y = ctx.canvas.height - opts.padding;
@@ -239,12 +244,13 @@ var hud = (function() {
 
         switch (positionMatches[2]) {
             case 'left':
+                position.x = opts.padding;
                 break;
             case 'center':
                 position.x = ctx.canvas.width / 2;
                 break;
             case 'right':
-                position.x = ctx.canvas.width - opts.padding;
+                position.x = ctx.canvas.width;
                 break;
         }
 
@@ -299,50 +305,23 @@ var hud = (function() {
 // Place all enemy objects in an array called allEnemies
 // Place the player object in a variable called player
 
-/* Shells and stubs so Engine Update and Render calls don't fail.
+/*
    Doing it this way as we need to wait for the resources to load before instantiating
    our objects as our objects use properties such as the width and height of the
    sprites.
 */
 var allEnemies = [];
 var player = [];
-player.update = function() {};
-player.render = function() {};
-
-// Once our resources have been loaded, create enemies and player and input events
-Resources.onReady(function() {
-
-    //create some enemies
-    allEnemies.push(new Enemy());
-    allEnemies.push(new Enemy());
-    allEnemies.push(new Enemy());
-    allEnemies.push(new Enemy());
-
-    //create the player
-    player = new Player();
-
-    // This listens for key presses and sends the keys to your
-    // Player.handleInput() method. You don't need to modify this.
-    document.addEventListener('keyup', function(e) {
-        var allowedKeys = {
-            37: 'left',
-            38: 'up',
-            39: 'right',
-            40: 'down'
-        };
-
-        player.handleInput(allowedKeys[e.keyCode]);
-    });
-});
-
 
 //DEV - draw bounding box border //TODO remove.
-function drawBoxBorder(box, borderColor){
+/*
+function drawBoxBorder(box, borderColor) {
     borderColor = borderColor || '#000';
     ctx.strokeStyle = borderColor;
     ctx.lineWidth = 2;
     ctx.strokeRect(box.left, box.top, box.width, box.height);
 }
+*/
 
 /**
  * Returns a random integer between min (inclusive) and max (inclusive)
