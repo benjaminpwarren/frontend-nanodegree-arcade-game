@@ -2,6 +2,7 @@
 
 /* global Resources, resources, tile, ctx, init */ //for JSHint
 
+// Define our basic entity. Both the player and enemies share these properties and methods.
 var Entity = function(options) {
 
     this.sprite = options.sprite;
@@ -26,7 +27,7 @@ Entity.prototype.render = function() {
     ctx.drawImage(this.img, this.x, this.y);
 };
 
-// Helper methods
+// Helper methods. Used for collision detection.
 
 Entity.prototype.left = function() {
     return this.x;
@@ -44,7 +45,7 @@ Entity.prototype.bottom = function() {
     return this.y + this.img.height;
 };
 
-/* Get the resource's bounding box and apply to current position */
+/* Get the resource's bounding box and adjust to current position */
 Entity.prototype.boundingBox = function() {
 
     var box = Object.assign({}, this.resource.boundingBox);
@@ -105,7 +106,6 @@ Enemy.prototype.update = function(dt) {
 // Now write your own player class
 // This class requires an update(), render() and
 // a handleInput() method.
-
 var Player = function(options) {
 
     //set up a default options object so it's easy to create a player.
@@ -316,16 +316,6 @@ var hud = (function() {
 */
 var allEnemies = [];
 var player = [];
-
-//DEV - draw bounding box border //TODO remove.
-/*
-function drawBoxBorder(box, borderColor) {
-    borderColor = borderColor || '#000';
-    ctx.strokeStyle = borderColor;
-    ctx.lineWidth = 2;
-    ctx.strokeRect(box.left, box.top, box.width, box.height);
-}
-*/
 
 /**
  * Returns a random integer between min (inclusive) and max (inclusive)

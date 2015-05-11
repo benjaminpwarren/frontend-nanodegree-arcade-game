@@ -23,11 +23,11 @@ Enemy bugs are patrolling between you and your goal! Avoid the bugs or lose a li
 
 The enemies spawn with a random speed setting on a random row. Be careful!
 
-##5. Lives and Points
+##5. Lives and Points, Hearts and Gems
 
-You start with five (5) lives. Each contact with an enemy bug will reset your position and reduce your lives by one (1). Once you have zero lives, it's GAME OVER!
+You start with five (5) lives (Hearts). Each contact with an enemy bug will reset your position and reduce your lives by one (1). Once you have zero lives, it's GAME OVER!
 
-You start with 0 gems and must earn 10 to win.
+You start with 0 points (Gems) and must earn 10 to win.
 
 ##6. Restarting
 
@@ -35,5 +35,5 @@ If you win all the gems or lose all your lives, you will be presented with an op
 
 Of course, you can always restart instantly by refreshing the page.
 
-
+<br>
 Enjoy!

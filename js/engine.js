@@ -238,7 +238,8 @@ var Engine = (function(global) {
                 if (enemy2.y !== enemy.y) return;
 
                 //if enemy2 is behind and going slower, skip full overlap check
-                if (enemy2.speed <= enemy.speed && enemy2.x < enemy.x - enemy.img.width) return;
+                if (enemy2.speed <= enemy.speed &&
+                    enemy2.x < enemy.x - enemy.img.width) return;
 
                 if (enemy2 === enemy) return;
 
@@ -271,8 +272,6 @@ var Engine = (function(global) {
             if (player.points >= player.maxPoints) {
 
                 running = false;
-
-                render();
 
                 hud.textElements.push({
                     text: 'YOU WON!',
@@ -354,7 +353,6 @@ var Engine = (function(global) {
         renderEntities();
 
         hud.render();
-
     }
 
     /* This function is called by the render function and is called on each game
@@ -382,7 +380,6 @@ var Engine = (function(global) {
         allEnemies.length = 0;
         //clear any text messages from the heads-up display.
         hud.textElements.length = 0;
-
     }
 
     /* Go ahead and load all of the images we know we're going to need to
@@ -399,6 +396,7 @@ var Engine = (function(global) {
     resources['images/Gem Orange-small.png'] = {};
     resources['images/Gem Orange outline-small.png'] = {};
 
+    //boundingBox refers to the collision bounding box
     resources['images/enemy-bug.png'] = {
         boundingBox: {
             left: 1,
@@ -409,6 +407,11 @@ var Engine = (function(global) {
         feetCenterY: 127
     };
 
+    /*Character bounding box has been reduced to a factor of .8.
+
+      When using bounding boxes, a factor of 0.8 makes for more visually realistic
+      collisions due to bounding boxes being a very approximate representation of the
+      entity's shape.*/
     resources['images/char-boy.png'] = {
         boundingBox: {
             left: 24,
