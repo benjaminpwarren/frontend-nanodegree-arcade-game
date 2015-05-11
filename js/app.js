@@ -1,6 +1,6 @@
 'use strict';
 
-/* global Resources, resources, tile, ctx, drawBoxBorder, init */
+/* global Resources, resources, tile, ctx, init */ //for JSHint
 
 var Entity = function(options) {
 
@@ -24,8 +24,6 @@ Entity.prototype.spawn = function(startTile) {
 // Draw the entity on the screen
 Entity.prototype.render = function() {
     ctx.drawImage(this.img, this.x, this.y);
-    //drawBoxBorder(this.boundingBox(), "#f00");
-    //drawBoxBorder(this.box(), "#00f");
 };
 
 // Helper methods
@@ -46,17 +44,6 @@ Entity.prototype.bottom = function() {
     return this.y + this.img.height;
 };
 
-/*Entity.prototype.box = function(){
-    return {
-        left: this.left(),
-        right: this.right(),
-        top: this.top(),
-        bottom: this.bottom(),
-        width: this.img.width,
-        height: this.img.height
-    };
-};*/
-
 /* Get the resource's bounding box and apply to current position */
 Entity.prototype.boundingBox = function() {
 
@@ -73,6 +60,7 @@ Entity.prototype.boundingBox = function() {
 // Enemies our player must avoid
 var Enemy = function(options) {
 
+    //set up a default options object so it's easy to create a player.
     var defaults = {
         sprite: 'images/enemy-bug.png',
         startTile: {
@@ -81,6 +69,7 @@ var Enemy = function(options) {
         }
     };
 
+    //allow passed options parameters to be used, merging with and overwriting defaults
     options = Object.assign({}, defaults, options);
 
     //give the enemy one of three speeds: 1/2 base speed, base speed, or 1 1/2 base speed.
@@ -102,6 +91,11 @@ Enemy.prototype.update = function(dt) {
 
     this.x = this.x + (this.speed * dt);
 
+    /*When an enemy moves off the canvas, kill and recreate.
+
+      Another way of doing this would be to just change the .x property but our
+      constructor also generates a random speed and row (.y).
+    */
     if (this.x > ctx.canvas.width) {
         allEnemies.splice(allEnemies.indexOf(this), 1);
         allEnemies.push(new Enemy());
@@ -114,6 +108,7 @@ Enemy.prototype.update = function(dt) {
 
 var Player = function(options) {
 
+    //set up a default options object so it's easy to create a player.
     var defaults = {
         sprite: 'images/char-boy.png',
         lives: 5,
@@ -125,6 +120,7 @@ var Player = function(options) {
         }
     };
 
+    //allow passed options parameters to be used, merging with and overwriting defaults
     options = Object.assign({}, defaults, options);
 
     this.lives = options.lives;
@@ -149,7 +145,7 @@ Player.prototype.update = function() {
 
 };
 
-//handles player input to move character etc.
+//handles player input to move character, and reset.
 Player.prototype.handleInput = function(key) {
 
     var xDistance = tile.width;
@@ -169,6 +165,8 @@ Player.prototype.handleInput = function(key) {
             this.dy = yDistance;
             break;
         case 'y':
+            /*pressing Y will reset the game, but we only want this to happen when the
+              player has won or lost (game over).*/
             if (player.lives === 0 || player.points >= player.maxPoints) {
                 init();
             }
@@ -176,9 +174,15 @@ Player.prototype.handleInput = function(key) {
     }
 };
 
-/* hud = Heads Up Display. Allows information and messages to be overlayed on the game
-   canvas e.g. points, lives remaining, and win/game over messages. */
+/* hud = Heads Up Display. This is for overlaying information and messages on the game
+   canvas e.g. points, lives remaining, and win/game over messages.
 
+   The internal drawLives and drawPoints functions use the associated player properties.
+
+   The drawText method is a way of drawing generic text messages. Push your message
+   objects to the exported textElements array and they'll be rendered. See the drawText
+   function def defaults obj below for an example off how to define a message object.
+*/
 var hud = (function() {
 
     var canvas = document.createElement('canvas');
@@ -331,7 +335,15 @@ function getRandomInt(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-//assign polyfill so we can 'merge' ojects
+/*The below is a polyfill for the Object.assign function.
+
+  Object.assign allows us to merge two objects. It's like the jQuery .extend function.
+
+  It's used here to override default options objects with options objects that might be
+  passed to a constructor or method.
+
+  For a full explanation of Object.assign, see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/assign
+*/
 if (!Object.assign) {
     Object.defineProperty(Object, 'assign', {
         enumerable: false,

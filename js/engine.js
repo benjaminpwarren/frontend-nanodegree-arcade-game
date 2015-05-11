@@ -17,7 +17,7 @@
 'use strict';
 
 //TODO: refactor so not polluting global namespace
-/* global player, allEnemies, hud, Resources, Enemy, Player */
+/* global player, allEnemies, hud, Resources, Enemy, Player */ //for JSHint
 
 var Engine = (function(global) {
     /* Predefine the variables we'll be using within this scope,
@@ -30,17 +30,18 @@ var Engine = (function(global) {
         ctx = canvas.getContext('2d'),
         lastTime;
 
-    // Set our tile properties for use below. Also exported.
+    // Set our tile properties for use below. Also exported for use elsewhere
     var tile = {
         width: 101,
         height: 83, //83 is effective height as a result of overlap placement
-        topOffset: 50
+        topOffset: 50 //"ground" height on tile
     };
 
     canvas.width = 505;
     canvas.height = 606;
     doc.getElementById('wall').appendChild(canvas);
 
+    //set our boundary. The player is limited to moving only inside this boundary
     var border = {
         x: 0,
         y: tile.topOffset + 1,
@@ -50,7 +51,8 @@ var Engine = (function(global) {
 
     //add these for convenience when doing player boundary check.
     //these don't have to be methods, they could just be values, but this is easier to
-    //understand when they actually get used.
+    //understand when they actually get used as the entity/player versions are
+    //necessarily methods (as the player moves!).
     border.left = function() {
         return border.x;
     };
@@ -64,6 +66,7 @@ var Engine = (function(global) {
         return border.y + border.height;
     };
 
+    //global so we can stop the game loop
     var running = true;
 
     /* This function serves as the kickoff point for the game loop itself
